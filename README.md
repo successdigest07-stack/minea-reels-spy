@@ -95,7 +95,7 @@
             width: 100%;
             height: 100%;
             scroll-snap-align: start;
-            background: #000;
+            background: #111;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -298,7 +298,8 @@
             {
                 id: "ad_101",
                 brandName: "Urban Travel Bag Co.",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                poster: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
                 startDate: "2026-01-10",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -311,7 +312,8 @@
             {
                 id: "ad_102",
                 brandName: "Kesh Care Hair Serum",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                poster: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
                 startDate: "2026-02-01",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -324,7 +326,8 @@
             {
                 id: "ad_103",
                 brandName: "Flex Gym Duffel Bag",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+                poster: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
                 startDate: "2025-11-01",
                 endDate: "2026-02-10",
                 status: "INACTIVE",
@@ -345,8 +348,8 @@
             }
 
             feedContainer.innerHTML = data.map((ad, index) => `
-                <div class="reel" data-index="${index}">
-                    <video loop playsinline muted webkit-playsinline src="${ad.videoUrl}"></video>
+                <div class="reel" data-index="${index}" onclick="togglePlay(this)">
+                    <video loop playsinline muted webkit-playsinline poster="${ad.poster}" src="${ad.videoUrl}"></video>
                     <div class="overlay-gradient"></div>
                     
                     <div class="top-meta">
@@ -357,9 +360,9 @@
                     </div>
 
                     <div class="side-actions">
-                        <div class="action-btn" onclick="alert('Ad ID: ${ad.id}')">🆔</div>
-                        <div class="action-btn" onclick="alert('Country: ${ad.country} | Lang: ${ad.language}')">🌐</div>
-                        <div class="action-btn" onclick="navigator.clipboard.writeText('${ad.landingPage}'); alert('Link Copied!')">🔗</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); alert('Ad ID: ${ad.id}')">🆔</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); alert('Country: ${ad.country} | Lang: ${ad.language}')">🌐</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.landingPage}'); alert('Link Copied!')">🔗</div>
                     </div>
 
                     <div class="bottom-details">
@@ -382,12 +385,23 @@
                             </div>
                         </div>
 
-                        <a href="${ad.landingPage}" target="_blank" class="cta-btn">View in Ad Library ➔</a>
+                        <a href="${ad.landingPage}" target="_blank" onclick="event.stopPropagation();" class="cta-btn">View in Ad Library ➔</a>
                     </div>
                 </div>
             `).join('');
 
             setupAutoplay();
+        }
+
+        function togglePlay(reelElem) {
+            const video = reelElem.querySelector('video');
+            if (video) {
+                if (video.paused) {
+                    video.play().catch(() => {});
+                } else {
+                    video.pause();
+                }
+            }
         }
 
         function applyFilters() {
