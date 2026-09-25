@@ -297,6 +297,20 @@
         const rawAdsData = [
             {
                 id: "ad_101",
+                brandName: "ChefPro Kitchen Tools",
+                poster: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
+                startDate: "2026-01-10",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "IN",
+                language: "en",
+                platforms: ["Facebook", "Instagram"],
+                adCopy: "Smart 3-in-1 automatic vegetable slicer and kitchen chopper. Save 50% time cooking!",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_102",
                 brandName: "Urban Travel Bag Co.",
                 poster: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
                 videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
@@ -310,7 +324,7 @@
                 landingPage: "https://facebook.com/ads/library"
             },
             {
-                id: "ad_102",
+                id: "ad_103",
                 brandName: "Kesh Care Hair Serum",
                 poster: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
                 videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
@@ -321,20 +335,6 @@
                 language: "hi",
                 platforms: ["Instagram"],
                 adCopy: "Organic hair growth oil for fast hair fall control.",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_103",
-                brandName: "Flex Gym Duffel Bag",
-                poster: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=600&q=80",
-                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
-                startDate: "2025-11-01",
-                endDate: "2026-02-10",
-                status: "INACTIVE",
-                country: "US",
-                language: "en",
-                platforms: ["Facebook"],
-                adCopy: "Premium leather sports duffel bag with shoe compartment.",
                 landingPage: "https://facebook.com/ads/library"
             }
         ];
