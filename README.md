@@ -262,9 +262,15 @@
         <div class="filters-grid">
             <select id="countryFilter" onchange="applyFilters()">
                 <option value="ALL">All Countries</option>
-                <option value="IN">India</option>
-                <option value="US">United States</option>
-                <option value="GB">United Kingdom</option>
+                <option value="IN">India 🇮🇳</option>
+                <option value="US">United States 🇺🇸</option>
+                <option value="GB">United Kingdom 🇬🇧</option>
+                <option value="CA">Canada 🇨🇦</option>
+                <option value="AU">Australia 🇦🇺</option>
+                <option value="DE">Germany 🇩🇪</option>
+                <option value="AE">UAE 🇦🇪</option>
+                <option value="SG">Singapore 🇸🇬</option>
+                <option value="BR">Brazil 🇧🇷</option>
             </select>
 
             <select id="statusFilter" onchange="applyFilters()">
@@ -277,6 +283,8 @@
                 <option value="ALL">All Languages</option>
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
             </select>
 
             <select id="platformFilter" onchange="applyFilters()">
@@ -299,7 +307,7 @@
                 id: "ad_101",
                 brandName: "ChefPro Kitchen Tools",
                 poster: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80",
-                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                 startDate: "2026-01-10",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -313,7 +321,7 @@
                 id: "ad_102",
                 brandName: "Urban Travel Bag Co.",
                 poster: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
-                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
                 startDate: "2026-01-10",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -327,14 +335,112 @@
                 id: "ad_103",
                 brandName: "Kesh Care Hair Serum",
                 poster: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
-                videoUrl: "https://vjs.zencdn.net/v/oceans.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
                 startDate: "2026-02-01",
                 endDate: "Running Now",
                 status: "ACTIVE",
                 country: "IN",
                 language: "hi",
                 platforms: ["Instagram"],
-                adCopy: "Organic hair growth oil for fast hair fall control.",
+                adCopy: "Organic hair growth oil for fast hair fall control and natural shine.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_104",
+                brandName: "Aura Smart Watch Pro",
+                poster: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                startDate: "2026-01-20",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "US",
+                language: "en",
+                platforms: ["Instagram", "Facebook"],
+                adCopy: "Track AMOLED HD Display smartwatch with ECG and heart rate monitoring. 60% OFF today!",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_105",
+                brandName: "LumiGlow LED Sunset Lamp",
+                poster: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+                startDate: "2026-02-05",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "GB",
+                language: "en",
+                platforms: ["Instagram"],
+                adCopy: "Transform your bedroom vibe with 16-color remote controllable sunset projector.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_106",
+                brandName: "FitFlex Ergonomic Yoga Mat",
+                poster: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                startDate: "2025-12-10",
+                endDate: "2026-02-01",
+                status: "INACTIVE",
+                country: "CA",
+                language: "en",
+                platforms: ["Facebook"],
+                adCopy: "Non-slip eco-friendly alignment yoga mat with carrying strap.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_107",
+                brandName: "PureBlend Portable Blender",
+                poster: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackBranding.mp4",
+                startDate: "2026-01-05",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "AU",
+                language: "en",
+                platforms: ["Instagram", "Audience Network"],
+                adCopy: "Blend smoothies anywhere with wireless rechargeable 6-blade portable kitchen blender.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_108",
+                brandName: "VelvetGlow Skincare Cream",
+                poster: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                startDate: "2026-02-12",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "AE",
+                language: "en",
+                platforms: ["Instagram"],
+                adCopy: "Hydrating hyaluronic acid night moisturizer for glass skin effect.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_109",
+                brandName: "Nordic Home Coffee Grinder",
+                poster: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+                startDate: "2026-01-18",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "DE",
+                language: "de",
+                platforms: ["Facebook", "Instagram"],
+                adCopy: "Precision electric Burr coffee bean grinder for perfect espresso shots at home.",
+                landingPage: "https://facebook.com/ads/library"
+            },
+            {
+                id: "ad_110",
+                brandName: "AirStride Running Sneakers",
+                poster: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+                startDate: "2026-02-01",
+                endDate: "Running Now",
+                status: "ACTIVE",
+                country: "SG",
+                language: "en",
+                platforms: ["Instagram"],
+                adCopy: "Ultra-lightweight breathable athletic running shoes with memory foam cushion.",
                 landingPage: "https://facebook.com/ads/library"
             }
         ];
