@@ -22,7 +22,6 @@
             overflow: hidden;
         }
 
-        /* --- TOP CONTROL & FILTER BAR --- */
         header {
             width: 100%;
             max-width: 480px;
@@ -61,7 +60,6 @@
             cursor: pointer;
         }
 
-        /* Dynamic Filters Grid */
         .filters-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -79,7 +77,6 @@
             width: 100%;
         }
 
-        /* --- REELS CONTAINER --- */
         .reels-container {
             width: 100%;
             max-width: 480px;
@@ -93,7 +90,6 @@
             display: none;
         }
 
-        /* --- SINGLE REEL --- */
         .reel {
             position: relative;
             width: 100%;
@@ -121,7 +117,6 @@
             pointer-events: none;
         }
 
-        /* --- REEL OVERLAYS & INSIGHTS --- */
         .top-meta {
             position: absolute;
             top: 15px;
@@ -154,7 +149,6 @@
         .status-active { background: #00e676; color: #000; }
         .status-inactive { background: #ff5252; color: #fff; }
 
-        /* Right Action Bar */
         .side-actions {
             position: absolute;
             right: 12px;
@@ -180,7 +174,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Bottom Details Overlay */
         .bottom-details {
             position: absolute;
             bottom: 15px;
@@ -260,10 +253,9 @@
 </head>
 <body>
 
-    <!-- TOP FILTERS BAR -->
     <header>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search keywords or brands..." oninput="applyFilters()">
+            <input type="text" id="searchInput" placeholder="Search keywords..." onkeyup="applyFilters()">
             <button onclick="applyFilters()">Search</button>
         </div>
         
@@ -299,27 +291,26 @@
         </div>
     </header>
 
-    <!-- REELS FEED -->
     <div class="reels-container" id="reelsFeed"></div>
 
     <script>
         const rawAdsData = [
             {
-                id: "ad_001",
-                brandName: "Kesh Veda Hair Oil",
+                id: "ad_101",
+                brandName: "Urban Travel Bag Co.",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                startDate: "2026-01-15",
+                startDate: "2026-01-10",
                 endDate: "Running Now",
                 status: "ACTIVE",
                 country: "IN",
                 language: "en",
                 platforms: ["Instagram", "Facebook"],
-                adCopy: "Stop hair fall naturally with cold-pressed herbal hair growth formula. 40% OFF today!",
+                adCopy: "Waterproof anti-theft laptop travel bag with USB charging port. Limited time deal!",
                 landingPage: "https://facebook.com/ads/library"
             },
             {
-                id: "ad_002",
-                brandName: "Lumina Hair Care",
+                id: "ad_102",
+                brandName: "Kesh Care Hair Serum",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
                 startDate: "2026-02-01",
                 endDate: "Running Now",
@@ -327,12 +318,12 @@
                 country: "IN",
                 language: "hi",
                 platforms: ["Instagram"],
-                adCopy: "Get salon-like hair shine at home. Organic hair serum with Argan oil.",
+                adCopy: "Organic hair growth oil for fast hair fall control.",
                 landingPage: "https://facebook.com/ads/library"
             },
             {
-                id: "ad_003",
-                brandName: "Flex Fitness Wear",
+                id: "ad_103",
+                brandName: "Flex Gym Duffel Bag",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
                 startDate: "2025-11-01",
                 endDate: "2026-02-10",
@@ -340,7 +331,7 @@
                 country: "US",
                 language: "en",
                 platforms: ["Facebook"],
-                adCopy: "Best activewear for gym training. Buy 1 Get 1 Free.",
+                adCopy: "Premium leather sports duffel bag with shoe compartment.",
                 landingPage: "https://facebook.com/ads/library"
             }
         ];
