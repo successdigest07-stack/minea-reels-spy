@@ -27,12 +27,12 @@
             width: 100%;
             max-width: 480px;
             background: #181920;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #2a2b36;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .search-box {
@@ -48,7 +48,7 @@
             background: #0d0e12;
             color: #fff;
             outline: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .search-box button {
@@ -72,9 +72,9 @@
             background: #222430;
             color: #ccc;
             border: 1px solid #333;
-            padding: 6px;
+            padding: 5px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             outline: none;
             width: 100%;
         }
@@ -83,7 +83,7 @@
         .reels-container {
             width: 100%;
             max-width: 480px;
-            height: calc(100vh - 110px);
+            height: calc(100vh - 105px);
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scrollbar-width: none;
@@ -154,14 +154,14 @@
         .status-active { background: #00e676; color: #000; }
         .status-inactive { background: #ff5252; color: #fff; }
 
-        /* Right Action Bar (Minea Style) */
+        /* Right Action Bar */
         .side-actions {
             position: absolute;
             right: 12px;
-            bottom: 100px;
+            bottom: 110px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             z-index: 20;
         }
 
@@ -169,19 +169,18 @@
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 0.7rem;
+            font-size: 0.85rem;
             cursor: pointer;
             backdrop-filter: blur(5px);
         }
 
-        /* Bottom Section Meta */
+        /* Bottom Details Overlay */
         .bottom-details {
             position: absolute;
             bottom: 15px;
@@ -306,12 +305,11 @@
     <div class="reels-container" id="reelsFeed"></div>
 
     <script>
-        // Mock dataset containing full FB Ad Library meta information
         const rawAdsData = [
             {
                 id: "ad_001",
                 brandName: "Lumina Studio",
-                videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-holding-a-smartphone-with-a-green-screen-40116-large.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                 startDate: "2026-01-15",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -324,7 +322,7 @@
             {
                 id: "ad_002",
                 brandName: "Flex Gym Gear",
-                videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-man-runs-on-a-treadmill-in-a-gym-40915-large.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
                 startDate: "2025-11-01",
                 endDate: "2026-02-10",
                 status: "INACTIVE",
@@ -337,7 +335,7 @@
             {
                 id: "ad_003",
                 brandName: "Aura Skin Care",
-                videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-woman-applying-facial-cream-41551-large.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
                 startDate: "2026-03-01",
                 endDate: "Running Now",
                 status: "ACTIVE",
@@ -351,7 +349,6 @@
 
         const feedContainer = document.getElementById('reelsFeed');
 
-        // Render dataset to UI
         function renderFeed(data) {
             if (data.length === 0) {
                 feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
@@ -360,10 +357,9 @@
 
             feedContainer.innerHTML = data.map((ad, index) => `
                 <div class="reel" data-index="${index}">
-                    <video loop playsinline muted src="${ad.videoUrl}"></video>
+                    <video loop playsinline muted webkit-playsinline src="${ad.videoUrl}"></video>
                     <div class="overlay-gradient"></div>
                     
-                    <!-- Top Bar Meta -->
                     <div class="top-meta">
                         <span class="brand-badge">${ad.brandName}</span>
                         <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">
@@ -371,14 +367,12 @@
                         </span>
                     </div>
 
-                    <!-- Right Minea Quick Actions -->
                     <div class="side-actions">
                         <div class="action-btn" onclick="alert('Ad ID: ${ad.id}')">🆔</div>
                         <div class="action-btn" onclick="alert('Country: ${ad.country} | Lang: ${ad.language}')">🌐</div>
                         <div class="action-btn" onclick="navigator.clipboard.writeText('${ad.landingPage}'); alert('Link Copied!')">🔗</div>
                     </div>
 
-                    <!-- Bottom Details Overlay -->
                     <div class="bottom-details">
                         <div class="tags-row">
                             <span class="tag">🌐 ${ad.country}</span>
@@ -407,7 +401,6 @@
             setupAutoplay();
         }
 
-        // Apply filters directly on client array
         function applyFilters() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const country = document.getElementById('countryFilter').value;
@@ -432,7 +425,6 @@
             renderFeed(filtered);
         }
 
-        // Handle auto play video upon snap scroll
         function setupAutoplay() {
             const reels = document.querySelectorAll('.reel');
             const observer = new IntersectionObserver((entries) => {
@@ -445,12 +437,11 @@
                         video.currentTime = 0;
                     }
                 });
-            }, { threshold: 0.8 });
+            }, { threshold: 0.6 });
 
             reels.forEach(reel => observer.observe(reel));
         }
 
-        // Initial Load
         renderFeed(rawAdsData);
     </script>
 </body>
