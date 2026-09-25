@@ -263,17 +263,16 @@
     <!-- TOP FILTERS BAR -->
     <header>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search keywords or brands...">
+            <input type="text" id="searchInput" placeholder="Search keywords or brands..." oninput="applyFilters()">
             <button onclick="applyFilters()">Search</button>
         </div>
         
         <div class="filters-grid">
             <select id="countryFilter" onchange="applyFilters()">
                 <option value="ALL">All Countries</option>
-                <option value="US">United States</option>
                 <option value="IN">India</option>
+                <option value="US">United States</option>
                 <option value="GB">United Kingdom</option>
-                <option value="CA">Canada</option>
             </select>
 
             <select id="statusFilter" onchange="applyFilters()">
@@ -285,7 +284,6 @@
             <select id="languageFilter" onchange="applyFilters()">
                 <option value="ALL">All Languages</option>
                 <option value="en">English</option>
-                <option value="es">Spanish</option>
                 <option value="hi">Hindi</option>
             </select>
 
@@ -308,41 +306,41 @@
         const rawAdsData = [
             {
                 id: "ad_001",
-                brandName: "Lumina Studio",
+                brandName: "Kesh Veda Hair Oil",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                 startDate: "2026-01-15",
                 endDate: "Running Now",
                 status: "ACTIVE",
-                country: "US",
+                country: "IN",
                 language: "en",
                 platforms: ["Instagram", "Facebook"],
-                adCopy: "Upgrade your lighting with Lumina! 🔥 50% discount ends this week. Order now!",
+                adCopy: "Stop hair fall naturally with cold-pressed herbal hair growth formula. 40% OFF today!",
                 landingPage: "https://facebook.com/ads/library"
             },
             {
                 id: "ad_002",
-                brandName: "Flex Gym Gear",
+                brandName: "Lumina Hair Care",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-                startDate: "2025-11-01",
-                endDate: "2026-02-10",
-                status: "INACTIVE",
+                startDate: "2026-02-01",
+                endDate: "Running Now",
+                status: "ACTIVE",
                 country: "IN",
                 language: "hi",
-                platforms: ["Facebook"],
-                adCopy: "Best fitness gear tested by pros. Buy 1 Get 1 free on all compression items.",
+                platforms: ["Instagram"],
+                adCopy: "Get salon-like hair shine at home. Organic hair serum with Argan oil.",
                 landingPage: "https://facebook.com/ads/library"
             },
             {
                 id: "ad_003",
-                brandName: "Aura Skin Care",
+                brandName: "Flex Fitness Wear",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-                startDate: "2026-03-01",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "GB",
+                startDate: "2025-11-01",
+                endDate: "2026-02-10",
+                status: "INACTIVE",
+                country: "US",
                 language: "en",
-                platforms: ["Instagram", "Audience Network"],
-                adCopy: "Hydrate your skin naturally with our organic serum range. Free shipping across Europe.",
+                platforms: ["Facebook"],
+                adCopy: "Best activewear for gym training. Buy 1 Get 1 Free.",
                 landingPage: "https://facebook.com/ads/library"
             }
         ];
@@ -402,7 +400,7 @@
         }
 
         function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const country = document.getElementById('countryFilter').value;
             const status = document.getElementById('statusFilter').value;
             const language = document.getElementById('languageFilter').value;
@@ -411,7 +409,7 @@
             const endDate = document.getElementById('endDate').value;
 
             const filtered = rawAdsData.filter(ad => {
-                const matchesQuery = ad.brandName.toLowerCase().includes(query) || ad.adCopy.toLowerCase().includes(query);
+                const matchesQuery = !query || ad.brandName.toLowerCase().includes(query) || ad.adCopy.toLowerCase().includes(query);
                 const matchesCountry = country === 'ALL' || ad.country === country;
                 const matchesStatus = status === 'ALL' || ad.status === status;
                 const matchesLang = language === 'ALL' || ad.language === language;
