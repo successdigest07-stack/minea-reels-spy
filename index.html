@@ -209,6 +209,13 @@
             border-radius: 4px;
         }
 
+        .tag-highlight {
+            background: rgba(0, 198, 255, 0.25);
+            border: 1px solid rgba(0, 198, 255, 0.5);
+            color: #00e5ff;
+            font-weight: bold;
+        }
+
         .insights-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -300,20 +307,10 @@
     <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
 
     <script>
-        const brandPrefixes = ["Aura", "Urban", "Kesh", "Fit", "Pure", "Nordic", "Velvet", "Glow", "Chef", "Nova", "Zen", "Hydro", "Eco"];
-        const brandSuffixes = ["Pro", "Lab", "Care", "Flex", "Blend", "Grinder", "Skin", "Up", "Kitchen", "Audio", "Chair", "Gear"];
+        const brandNames = ["Aura", "Urban", "Kesh", "FitFlex", "PureBlend", "Nordic", "VelvetGlow", "ChefPro", "NovaSound", "ZenDesk", "HydroPeak", "GlowUp"];
+        const categories = ["Kitchen", "Skincare", "Apparel", "Fitness", "Electronics", "Home Decor", "Footwear"];
         
-        const copyTemplates = [
-            "Smart automatic kitchen tool. Save 50% time cooking daily!",
-            "Waterproof anti-theft bag with fast charging port.",
-            "Organic nourishing formula for fast shine & strength.",
-            "Track fitness metrics with AMOLED HD display smartwatch.",
-            "Transform your room ambiance with custom LED lighting.",
-            "Non-slip eco-friendly mat designed for daily stability.",
-            "Blend fresh smoothies on the go with portable 6-blade blender."
-        ];
-
-        const reliableVideos = [
+        const videoSources = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
             "https://www.w3schools.com/html/movie.mp4"
@@ -323,8 +320,19 @@
         const languages = ["en", "hi", "de"];
         const platformsList = [["Facebook", "Instagram"], ["Instagram"], ["Facebook"], ["Audience Network", "Instagram"]];
 
-        let autoId = 1000;
+        let adCounter = Math.floor(Math.random() * 1000) + 100;
         let isFetching = false;
+
+        // Current Reference Date: September 26, 2026
+        const TODAY = new Date('2026-09-26');
+
+        function calculateDaysRunning(startStr, endStr, status) {
+            const start = new Date(startStr);
+            const end = status === "ACTIVE" ? TODAY : new Date(endStr);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays === 0 ? 1 : diffDays;
+        }
 
         function getActiveFilters() {
             return {
@@ -332,39 +340,51 @@
                 country: document.getElementById('countryFilter').value,
                 status: document.getElementById('statusFilter').value,
                 language: document.getElementById('languageFilter').value,
-                platform: document.getElementById('platformFilter').value,
-                startDate: document.getElementById('startDate').value,
-                endDate: document.getElementById('endDate').value
+                platform: document.getElementById('platformFilter').value
             };
         }
 
-        function createUniqueAd(filters) {
-            autoId++;
-            const isVideo = (autoId % 3 !== 0); // 66% Videos, 33% Images
+        function createUniqueAdCard(filters) {
+            adCounter++;
+            const currentId = adCounter;
             
-            const brand = `${brandPrefixes[autoId % brandPrefixes.length]} ${brandSuffixes[(autoId + 3) % brandSuffixes.length]}`;
-            const adCopy = `${copyTemplates[autoId % copyTemplates.length]} (#${autoId})`;
-            
-            const country = (filters.country !== 'ALL') ? filters.country : countries[autoId % countries.length];
-            const status = (filters.status !== 'ALL') ? filters.status : ((autoId % 2 === 0) ? "ACTIVE" : "INACTIVE");
-            const lang = (filters.language !== 'ALL') ? filters.language : languages[autoId % languages.length];
-            const platforms = (filters.platform !== 'ALL') ? [filters.platform] : platformsList[autoId % platformsList.length];
+            const isVideo = (currentId % 2 === 0);
+            const brand = `${brandNames[currentId % brandNames.length]} #${currentId}`;
+            const category = categories[currentId % categories.length];
+            const adCopy = `Special deal on ${category}! High demand item #${currentId}. Grab yours today with free shipping!`;
 
-            const imageSrc = `https://picsum.photos/seed/${autoId}/600/1000`;
-            const videoSrc = reliableVideos[autoId % reliableVideos.length];
+            const country = (filters.country !== 'ALL') ? filters.country : countries[currentId % countries.length];
+            const status = (filters.status !== 'ALL') ? filters.status : ((currentId % 2 === 0) ? "ACTIVE" : "INACTIVE");
+            const lang = (filters.language !== 'ALL') ? filters.language : languages[currentId % languages.length];
+            const platforms = (filters.platform !== 'ALL') ? [filters.platform] : platformsList[currentId % platformsList.length];
 
-            const startDay = (autoId % 20) + 1;
-            const startDate = `2026-0${(autoId % 2) + 1}-${startDay < 10 ? '0' + startDay : startDay}`;
-            const endDate = status === "ACTIVE" ? "Running Now" : "2026-03-01";
+            const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
+            const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
+
+            // Dynamic date generation leading up to today (Sept 26, 2026)
+            const daysAgo = (currentId % 30) + 1; 
+            const startDateObj = new Date('2026-09-26');
+            startDateObj.setDate(startDateObj.getDate() - daysAgo);
+            const startDate = startDateObj.toISOString().split('T')[0];
+
+            let endDate = "Running Now";
+            if (status === "INACTIVE") {
+                const endDateObj = new Date(startDateObj);
+                endDateObj.setDate(endDateObj.getDate() + Math.floor(daysAgo / 2) + 1);
+                endDate = endDateObj.toISOString().split('T')[0];
+            }
+
+            const daysRunning = calculateDaysRunning(startDate, endDate, status);
 
             return {
-                id: `ad_${autoId}`,
+                id: `ad_${currentId}`,
                 type: isVideo ? "video" : "image",
                 brandName: brand,
-                poster: imageSrc,
-                mediaUrl: isVideo ? videoSrc : imageSrc,
+                poster: imageUrl,
+                mediaUrl: isVideo ? videoUrl : imageUrl,
                 startDate: startDate,
                 endDate: endDate,
+                daysRunning: daysRunning,
                 status: status,
                 country: country,
                 language: lang,
@@ -376,13 +396,13 @@
 
         const feedContainer = document.getElementById('reelsFeed');
 
-        function renderAdCards(adsArray, append = false) {
-            if (!append && adsArray.length === 0) {
+        function renderCards(ads, append = false) {
+            if (!append && ads.length === 0) {
                 feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
                 return;
             }
 
-            const html = adsArray.map((ad) => {
+            const html = ads.map((ad) => {
                 const mediaHTML = ad.type === 'video' 
                     ? `<video loop playsinline muted autoplay webkit-playsinline src="${ad.mediaUrl}"></video>`
                     : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
@@ -407,6 +427,7 @@
 
                     <div class="bottom-details">
                         <div class="tags-row">
+                            <span class="tag tag-highlight">⏱️ ${ad.daysRunning} ${ad.daysRunning === 1 ? 'Day' : 'Days'} Running</span>
                             <span class="tag">${ad.type === 'video' ? '🎥 Video' : '🖼️ Image'}</span>
                             <span class="tag">🌐 ${ad.country}</span>
                             <span class="tag">🗣️ ${ad.language.toUpperCase()}</span>
@@ -439,35 +460,30 @@
                 feedContainer.scrollTop = 0;
             }
 
-            setupAutoplayObserver();
-        }
-
-        function appendBatch(count = 5) {
-            const filters = getActiveFilters();
-            const batch = [];
-            for (let i = 0; i < count; i++) {
-                batch.push(createUniqueAd(filters));
-            }
-            renderAdCards(batch, true);
+            setupObserver();
         }
 
         function applyFilters() {
-            feedContainer.innerHTML = '';
             const filters = getActiveFilters();
             const initialBatch = [];
-            for (let i = 0; i < 6; i++) {
-                initialBatch.push(createUniqueAd(filters));
+            for (let i = 0; i < 5; i++) {
+                initialBatch.push(createUniqueAdCard(filters));
             }
-            renderAdCards(initialBatch, false);
+            renderCards(initialBatch, false);
         }
 
         function checkInfiniteScroll() {
             if (isFetching) return;
 
-            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 600) {
+            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 500) {
                 isFetching = true;
-                appendBatch(4);
-                setTimeout(() => { isFetching = false; }, 200);
+                const filters = getActiveFilters();
+                const newBatch = [];
+                for (let i = 0; i < 4; i++) {
+                    newBatch.push(createUniqueAdCard(filters));
+                }
+                renderCards(newBatch, true);
+                setTimeout(() => { isFetching = false; }, 250);
             }
         }
 
@@ -482,7 +498,7 @@
             }
         }
 
-        function setupAutoplayObserver() {
+        function setupObserver() {
             const reels = document.querySelectorAll('.reel');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
