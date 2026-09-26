@@ -270,7 +270,6 @@
                 <option value="DE">Germany 🇩🇪</option>
                 <option value="AE">UAE 🇦🇪</option>
                 <option value="SG">Singapore 🇸🇬</option>
-                <option value="BR">Brazil 🇧🇷</option>
             </select>
 
             <select id="statusFilter" onchange="applyFilters()">
@@ -284,7 +283,6 @@
                 <option value="en">English</option>
                 <option value="hi">Hindi</option>
                 <option value="de">German</option>
-                <option value="es">Spanish</option>
             </select>
 
             <select id="platformFilter" onchange="applyFilters()">
@@ -299,117 +297,101 @@
         </div>
     </header>
 
-    <div class="reels-container" id="reelsFeed"></div>
+    <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
 
     <script>
-        const rawAdsData = [
-            {
-                id: "ad_101",
-                type: "video",
-                brandName: "ChefPro Kitchen Tools",
-                poster: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://vjs.zencdn.net/v/oceans.mp4",
-                startDate: "2026-01-10",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "IN",
-                language: "en",
-                platforms: ["Facebook", "Instagram"],
-                adCopy: "Smart 3-in-1 automatic vegetable slicer and kitchen chopper. Save 50% time cooking!",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_102",
-                type: "image",
-                brandName: "Urban Travel Bag Co.",
-                poster: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
-                startDate: "2026-01-10",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "IN",
-                language: "en",
-                platforms: ["Instagram", "Facebook"],
-                adCopy: "Waterproof anti-theft laptop travel bag with USB charging port. Limited time deal!",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_103",
-                type: "video",
-                brandName: "Kesh Care Hair Serum",
-                poster: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-                startDate: "2026-02-01",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "IN",
-                language: "hi",
-                platforms: ["Instagram"],
-                adCopy: "Organic hair growth oil for fast hair fall control and natural shine.",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_104",
-                type: "image",
-                brandName: "Aura Smart Watch Pro",
-                poster: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80",
-                startDate: "2026-01-20",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "US",
-                language: "en",
-                platforms: ["Instagram", "Facebook"],
-                adCopy: "Track AMOLED HD Display smartwatch with ECG and heart rate monitoring. 60% OFF today!",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_105",
-                type: "video",
-                brandName: "LumiGlow LED Sunset Lamp",
-                poster: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://vjs.zencdn.net/v/oceans.mp4",
-                startDate: "2026-02-05",
-                endDate: "Running Now",
-                status: "ACTIVE",
-                country: "GB",
-                language: "en",
-                platforms: ["Instagram"],
-                adCopy: "Transform your bedroom vibe with 16-color remote controllable sunset projector.",
-                landingPage: "https://facebook.com/ads/library"
-            },
-            {
-                id: "ad_106",
-                type: "image",
-                brandName: "FitFlex Ergonomic Yoga Mat",
-                poster: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
-                mediaUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80",
-                startDate: "2025-12-10",
-                endDate: "2026-02-01",
-                status: "INACTIVE",
-                country: "CA",
-                language: "en",
-                platforms: ["Facebook"],
-                adCopy: "Non-slip eco-friendly alignment yoga mat with carrying strap.",
-                landingPage: "https://facebook.com/ads/library"
-            }
+        const sampleBrands = [
+            "ChefPro Kitchen Tools", "Urban Travel Bag Co.", "Kesh Care Hair Serum", 
+            "Aura Smart Watch Pro", "LumiGlow LED Sunset Lamp", "FitFlex Yoga Mat", 
+            "PureBlend Portable Blender", "VelvetGlow Skincare", "Nordic Coffee Grinder", 
+            "AirStride Running Shoes", "GlowUp LED Mirror", "ZenDesk Ergonomic Chair"
         ];
+
+        const sampleCopies = [
+            "Smart 3-in-1 automatic vegetable slicer and kitchen chopper. Save 50% time cooking!",
+            "Waterproof anti-theft laptop travel bag with USB charging port. Limited time deal!",
+            "Organic hair growth oil for fast hair fall control and natural shine.",
+            "Track AMOLED HD Display smartwatch with ECG and heart rate monitoring. 60% OFF today!",
+            "Transform your bedroom vibe with 16-color remote controllable sunset projector.",
+            "Non-slip eco-friendly alignment yoga mat with carrying strap.",
+            "Blend smoothies anywhere with wireless rechargeable 6-blade portable kitchen blender.",
+            "Hydrating hyaluronic acid night moisturizer for glass skin effect."
+        ];
+
+        const videoPool = [
+            "https://lorem.video/720p_h264_10s.mp4",
+            "https://lorem.video/cat_480p_h264_30fps_15s_26crf_aac_96kbps.mp4",
+            "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+            "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+        ];
+
+        const imagePool = [
+            "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80"
+        ];
+
+        const countries = ["IN", "US", "GB", "CA", "AU", "DE", "AE", "SG"];
+        const languages = ["en", "hi", "de"];
+        const platformsList = [["Facebook", "Instagram"], ["Instagram"], ["Facebook"], ["Audience Network", "Instagram"]];
+
+        let loadedAds = [];
+        let autoId = 101;
+
+        function generateRandomAd() {
+            const isVideo = Math.random() > 0.35; // 65% video ads, 35% image ads
+            const brand = sampleBrands[Math.floor(Math.random() * sampleBrands.length)];
+            const copy = sampleCopies[Math.floor(Math.random() * sampleCopies.length)];
+            const country = countries[Math.floor(Math.random() * countries.length)];
+            const lang = languages[Math.floor(Math.random() * languages.length)];
+            const platforms = platformsList[Math.floor(Math.random() * platformsList.length)];
+            const status = Math.random() > 0.2 ? "ACTIVE" : "INACTIVE";
+
+            return {
+                id: `ad_${autoId++}`,
+                type: isVideo ? "video" : "image",
+                brandName: brand,
+                poster: imagePool[Math.floor(Math.random() * imagePool.length)],
+                mediaUrl: isVideo ? videoPool[Math.floor(Math.random() * videoPool.length)] : imagePool[Math.floor(Math.random() * imagePool.length)],
+                startDate: "2026-01-10",
+                endDate: status === "ACTIVE" ? "Running Now" : "2026-02-15",
+                status: status,
+                country: country,
+                language: lang,
+                platforms: platforms,
+                adCopy: copy,
+                landingPage: "https://facebook.com/ads/library"
+            };
+        }
+
+        // Generate initial batch of 15 ads
+        function loadMoreAds(count = 10) {
+            const newBatch = [];
+            for (let i = 0; i < count; i++) {
+                newBatch.push(generateRandomAd());
+            }
+            loadedAds.push(...newBatch);
+            return newBatch;
+        }
 
         const feedContainer = document.getElementById('reelsFeed');
 
-        function renderFeed(data) {
-            if (data.length === 0) {
+        function renderFeed(data, append = false) {
+            if (data.length === 0 && !append) {
                 feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
                 return;
             }
 
-            feedContainer.innerHTML = data.map((ad, index) => {
+            const html = data.map((ad, index) => {
                 const mediaHTML = ad.type === 'video' 
                     ? `<video loop playsinline muted autoplay webkit-playsinline poster="${ad.poster}" src="${ad.mediaUrl}"></video>`
                     : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
 
                 return `
-                <div class="reel" data-index="${index}" onclick="togglePlay(this)">
+                <div class="reel" data-id="${ad.id}" onclick="togglePlay(this)">
                     ${mediaHTML}
                     <div class="overlay-gradient"></div>
                     
@@ -453,7 +435,20 @@
                 `;
             }).join('');
 
+            if (append) {
+                feedContainer.insertAdjacentHTML('beforeend', html);
+            } else {
+                feedContainer.innerHTML = html;
+            }
+
             setupAutoplay();
+        }
+
+        function checkInfiniteScroll() {
+            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 600) {
+                const batch = loadMoreAds(5);
+                renderFeed(batch, true);
+            }
         }
 
         function togglePlay(reelElem) {
@@ -476,7 +471,7 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
 
-            const filtered = rawAdsData.filter(ad => {
+            const filtered = loadedAds.filter(ad => {
                 const matchesQuery = !query || ad.brandName.toLowerCase().includes(query) || ad.adCopy.toLowerCase().includes(query);
                 const matchesCountry = country === 'ALL' || ad.country === country;
                 const matchesStatus = status === 'ALL' || ad.status === status;
@@ -488,7 +483,7 @@
                 return matchesQuery && matchesCountry && matchesStatus && matchesLang && matchesPlatform && matchesStart && matchesEnd;
             });
 
-            renderFeed(filtered);
+            renderFeed(filtered, false);
         }
 
         function setupAutoplay() {
@@ -510,7 +505,9 @@
             reels.forEach(reel => observer.observe(reel));
         }
 
-        renderFeed(rawAdsData);
+        // Initialize with first batch
+        loadMoreAds(10);
+        renderFeed(loadedAds);
     </script>
 </body>
 </html>
