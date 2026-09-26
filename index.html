@@ -77,15 +77,6 @@
             flex-direction: column;
         }
 
-        .filter-label {
-            font-size: 0.55rem;
-            color: #888;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-            font-weight: bold;
-            padding-left: 2px;
-        }
-
         select, input[type="date"] {
             background: #222430;
             color: #ccc;
@@ -139,6 +130,7 @@
             pointer-events: none;
         }
 
+        /* Profile Header */
         .top-meta {
             position: absolute;
             top: 12px;
@@ -150,18 +142,47 @@
             z-index: 10;
         }
 
-        .brand-badge {
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .profile-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px 4px 4px;
+            border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .profile-dp {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #0084ff;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .page-category {
+            font-size: 0.58rem;
+            color: #aaa;
         }
 
         .status-badge {
-            padding: 3px 7px;
+            padding: 4px 8px;
             border-radius: 12px;
             font-size: 0.65rem;
             font-weight: bold;
@@ -279,6 +300,127 @@
             box-shadow: 0 4px 12px rgba(0, 132, 255, 0.3);
             margin-top: 2px;
         }
+
+        /* Advertiser Info Drawer Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-drawer {
+            width: 100%;
+            max-width: 480px;
+            background: #181920;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideUp 0.25s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #2a2b36;
+            margin-bottom: 14px;
+        }
+
+        .modal-dp {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0084ff;
+        }
+
+        .modal-title-box h3 {
+            font-size: 1.05rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .modal-title-box p {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .info-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .info-stat-card {
+            background: #222430;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-stat-card .num {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #00c6ff;
+        }
+
+        .info-stat-card .lbl {
+            font-size: 0.6rem;
+            color: #888;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .page-meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: #ccc;
+            margin-bottom: 18px;
+        }
+
+        .page-meta-item {
+            display: flex;
+            justify-content: space-between;
+            background: #111218;
+            padding: 8px 10px;
+            border-radius: 6px;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+            padding: 10px;
+            background: #2a2b36;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -342,9 +484,58 @@
 
     <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
 
+    <!-- Advertiser Info Modal -->
+    <div class="modal-overlay" id="pageInfoModal" onclick="closePageInfo()">
+        <div class="modal-drawer" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <img id="mDp" class="modal-dp" src="" alt="DP">
+                <div class="modal-title-box">
+                    <h3 id="mTitle">Brand <span style="color:#0084ff;">☑️</span></h3>
+                    <p id="mCategory">E-Commerce Page</p>
+                </div>
+            </div>
+
+            <div class="info-stats-grid">
+                <div class="info-stat-card">
+                    <div class="num" id="mFollowers">45.2K</div>
+                    <div class="lbl">Followers</div>
+                </div>
+                <div class="info-stat-card">
+                    <div class="num" id="mActiveAds">12</div>
+                    <div class="lbl">Active Ads</div>
+                </div>
+                <div class="info-stat-card">
+                    <div class="num" id="mPageAge">2 Yrs</div>
+                    <div class="lbl">Page Age</div>
+                </div>
+            </div>
+
+            <div class="page-meta-list">
+                <div class="page-meta-item">
+                    <span>Page Creation Date:</span>
+                    <strong id="mCreatedDate" style="color:#fff;">Jan 15, 2024</strong>
+                </div>
+                <div class="page-meta-item">
+                    <span>Instagram Handle:</span>
+                    <strong id="mInstaHandle" style="color:#00c6ff;">@brand_official</strong>
+                </div>
+                <div class="page-meta-item">
+                    <span>Facebook Page ID:</span>
+                    <strong id="mPageId" style="color:#aaa;">109283749201</strong>
+                </div>
+                <div class="page-meta-item">
+                    <span>Primary Location:</span>
+                    <strong id="mLocation" style="color:#fff;">India 🇮🇳</strong>
+                </div>
+            </div>
+
+            <button class="close-modal-btn" onclick="closePageInfo()">Close Info</button>
+        </div>
+    </div>
+
     <script>
-        const brandNames = ["Aura", "Urban", "Kesh", "FitFlex", "PureBlend", "Nordic", "VelvetGlow", "ChefPro", "NovaSound", "ZenDesk", "HydroPeak", "GlowUp"];
-        const categories = ["Kitchen", "Skincare", "Apparel", "Fitness", "Electronics", "Home Decor", "Footwear"];
+        const brandNames = ["Aura Care", "Urban Style", "Kesh Pure", "FitFlex Pro", "PureBlend", "Nordic Gear", "VelvetGlow", "ChefPro Kitchen", "NovaSound Audio", "ZenDesk Studio", "HydroPeak", "GlowUp Lab"];
+        const categories = ["E-Commerce Brand", "Beauty & Skincare", "Fashion & Apparel", "Health & Fitness", "Consumer Electronics", "Home & Kitchen", "Footwear Store"];
         
         const videoSources = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -358,6 +549,7 @@
 
         let adCounter = Math.floor(Math.random() * 1000) + 100;
         let isFetching = false;
+        let currentAdsStore = {};
 
         const TODAY = new Date('2026-09-26');
 
@@ -386,7 +578,7 @@
             const currentId = adCounter;
             
             const isVideo = (currentId % 2 === 0);
-            const brand = `${brandNames[currentId % brandNames.length]} #${currentId}`;
+            const brand = brandNames[currentId % brandNames.length];
             const category = categories[currentId % categories.length];
             const adCopy = `Special deal on ${category}! High demand item #${currentId}. Grab yours today with free shipping!`;
 
@@ -397,8 +589,8 @@
 
             const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
             const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
+            const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
 
-            // Calculate start date taking filter overrides into account if selected
             let startDate = filters.startDate;
             if (!startDate) {
                 const daysAgo = (currentId % 30) + 1; 
@@ -421,10 +613,12 @@
 
             const daysRunning = calculateDaysRunning(startDate, endDate, status);
 
-            return {
+            const adObj = {
                 id: `ad_${currentId}`,
                 type: isVideo ? "video" : "image",
                 brandName: brand,
+                category: category,
+                dp: dpUrl,
                 poster: imageUrl,
                 mediaUrl: isVideo ? videoUrl : imageUrl,
                 startDate: startDate,
@@ -435,8 +629,18 @@
                 language: lang,
                 platforms: platforms,
                 adCopy: adCopy,
-                landingPage: "https://facebook.com/ads/library"
+                landingPage: "https://facebook.com/ads/library",
+                // Advertiser Info
+                followers: `${(currentId * 1.7).toFixed(1)}K`,
+                activeAds: (currentId % 18) + 2,
+                pageAge: `${(currentId % 5) + 1} Yrs`,
+                createdDate: `20${21 + (currentId % 4)}-0${(currentId % 8) + 1}-12`,
+                instaHandle: `@${brand.toLowerCase().replace(/\s+/g, '')}_official`,
+                pageId: `10928374${currentId}`
             };
+
+            currentAdsStore[adObj.id] = adObj;
+            return adObj;
         }
 
         const feedContainer = document.getElementById('reelsFeed');
@@ -458,14 +662,21 @@
                     <div class="overlay-gradient"></div>
                     
                     <div class="top-meta">
-                        <span class="brand-badge">${ad.brandName}</span>
+                        <div class="profile-chip" onclick="event.stopPropagation(); showPageInfo('${ad.id}')">
+                            <img class="profile-dp" src="${ad.dp}" alt="DP">
+                            <div class="profile-info">
+                                <span class="brand-name">${ad.brandName} <span style="color:#0084ff; font-size:0.7rem;">☑️</span></span>
+                                <span class="page-category">${ad.category}</span>
+                            </div>
+                        </div>
+
                         <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">
                             ${ad.status}
                         </span>
                     </div>
 
                     <div class="side-actions">
-                        <div class="action-btn" onclick="event.stopPropagation(); alert('Ad ID: ${ad.id}')">🆔</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')">ℹ️</div>
                         <div class="action-btn" onclick="event.stopPropagation(); alert('Country: ${ad.country} | Lang: ${ad.language}')">🌐</div>
                         <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.landingPage}'); alert('Link Copied!')">🔗</div>
                     </div>
@@ -508,7 +719,30 @@
             setupObserver();
         }
 
+        function showPageInfo(adId) {
+            const ad = currentAdsStore[adId];
+            if (!ad) return;
+
+            document.getElementById('mDp').src = ad.dp;
+            document.getElementById('mTitle').innerHTML = `${ad.brandName} <span style="color:#0084ff;">☑️</span>`;
+            document.getElementById('mCategory').innerText = ad.category;
+            document.getElementById('mFollowers').innerText = ad.followers;
+            document.getElementById('mActiveAds').innerText = ad.activeAds;
+            document.getElementById('mPageAge').innerText = ad.pageAge;
+            document.getElementById('mCreatedDate').innerText = ad.createdDate;
+            document.getElementById('mInstaHandle').innerText = ad.instaHandle;
+            document.getElementById('mPageId').innerText = ad.pageId;
+            document.getElementById('mLocation').innerText = `${ad.country} Flag`;
+
+            document.getElementById('pageInfoModal').classList.add('active');
+        }
+
+        function closePageInfo() {
+            document.getElementById('pageInfoModal').classList.remove('active');
+        }
+
         function applyFilters() {
+            currentAdsStore = {};
             const filters = getActiveFilters();
             const initialBatch = [];
             for (let i = 0; i < 5; i++) {
@@ -566,4 +800,5 @@
         applyFilters();
     </script>
 </body>
-</html>
+                        </html>
+    
