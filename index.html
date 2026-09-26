@@ -3,69 +3,579 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Meta Ad Spy Tool</title>
+    <title>Meta Ad Spy - Reels Format</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        html, body { height: 100%; width: 100%; overflow: hidden; background-color: #0d0e12; color: #fff; display: flex; flex-direction: column; align-items: center; }
-        
-        header { width: 100%; max-width: 480px; background: #181920; padding: 10px; border-bottom: 1px solid #2a2b36; z-index: 100; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .search-box { display: flex; gap: 6px; }
-        .search-box input { flex: 1; padding: 8px 10px; border-radius: 6px; border: 1px solid #333; background: #0d0e12; color: #fff; font-size: 0.85rem; outline: none; }
-        .search-box button { padding: 8px 14px; background: #0084ff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-        
-        .filters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-        select { background: #222430; color: #ccc; border: 1px solid #333; padding: 6px; border-radius: 4px; font-size: 0.75rem; outline: none; width: 100%; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-        .reels-container { width: 100%; max-width: 480px; flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; position: relative; }
-        .reels-container::-webkit-scrollbar { display: none; }
-        .reel { position: relative; width: 100%; height: 100%; scroll-snap-align: start; background: #111; display: flex; justify-content: center; align-items: center; }
-        .reel video, .reel img.media-content { width: 100%; height: 100%; object-fit: cover; }
-        .overlay-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 65%; background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, transparent); pointer-events: none; }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #0d0e12;
+            color: #fff;
+        }
 
-        .top-meta { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .profile-chip { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.65); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(8px); }
-        .profile-dp { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-        .brand-name { font-size: 0.8rem; font-weight: bold; color: #fff; }
-        .status-badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; font-weight: bold; }
-        .status-active { background: rgba(0, 230, 118, 0.2); color: #00e676; border: 1px solid #00e676; }
-        .status-inactive { background: rgba(255, 82, 82, 0.2); color: #ff5252; border: 1px solid #ff5252; }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        .bottom-details { position: absolute; bottom: 16px; left: 12px; right: 12px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
-        .ad-copy { font-size: 0.8rem; line-height: 1.3; color: #ddd; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        header {
+            width: 100%;
+            max-width: 480px;
+            background: #181920;
+            padding: 8px 10px;
+            border-bottom: 1px solid #2a2b36;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
 
-        .tags-row { display: flex; gap: 6px; flex-wrap: wrap; }
-        .tag { background: rgba(255,255,255,0.15); font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; backdrop-filter: blur(4px); }
-        .tag-highlight { background: rgba(0,198,255,0.25); border: 1px solid rgba(0,198,255,0.5); color: #00e5ff; font-weight: bold; }
+        .search-box {
+            display: flex;
+            gap: 6px;
+        }
 
-        .cta-row { display: flex; gap: 8px; margin-top: 4px; }
-        .cta-btn-store { flex: 1; padding: 10px; background: linear-gradient(135deg, #00c6ff, #0072ff); color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 0.8rem; box-shadow: 0 4px 12px rgba(0,114,255,0.3); }
-        .cta-btn-library { flex: 1; padding: 10px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 0.8rem; backdrop-filter: blur(6px); }
+        .search-box input {
+            flex: 1;
+            padding: 7px 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #0d0e12;
+            color: #fff;
+            outline: none;
+            font-size: 0.8rem;
+        }
+
+        .search-box button {
+            padding: 7px 12px;
+            background: #0084ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        select, input[type="date"] {
+            background: #222430;
+            color: #ccc;
+            border: 1px solid #333;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            outline: none;
+            width: 100%;
+            height: 28px;
+        }
+
+        .reels-container {
+            width: 100%;
+            max-width: 480px;
+            flex: 1;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            position: relative;
+        }
+
+        .reels-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .reel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .reel video, .reel img.media-content {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .overlay-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65%;
+            background: linear-gradient(to top, rgba(0,0,0,0.98) 25%, transparent);
+            pointer-events: none;
+        }
+
+        /* Profile Header */
+        .top-meta {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .profile-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px 4px 4px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .profile-dp {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #0084ff;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .page-category {
+            font-size: 0.58rem;
+            color: #aaa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-active { background: #00e676; color: #000; }
+        .status-inactive { background: #ff5252; color: #fff; }
+
+        .side-actions {
+            position: absolute;
+            right: 10px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            text-decoration: none;
+        }
+
+        .bottom-details {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 58px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ad-copy {
+            font-size: 0.78rem;
+            line-height: 1.25;
+            color: #ddd;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tags-row {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            font-size: 0.62rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        .tag-highlight {
+            background: rgba(0, 198, 255, 0.25);
+            border: 1px solid rgba(0, 198, 255, 0.5);
+            color: #00e5ff;
+            font-weight: bold;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+
+        .metric-box {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            padding: 4px 6px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-box .label {
+            font-size: 0.55rem;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .metric-box .val {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #00c6ff;
+            margin-top: 1px;
+        }
+
+        /* Dual Action CTA Row */
+        .cta-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .cta-btn-store {
+            flex: 1;
+            padding: 8px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .cta-btn-library {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Advertiser Info Drawer Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-drawer {
+            width: 100%;
+            max-width: 480px;
+            background: #181920;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideUp 0.25s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #2a2b36;
+            margin-bottom: 14px;
+        }
+
+        .modal-dp {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0084ff;
+        }
+
+        .modal-title-box h3 {
+            font-size: 1.05rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .modal-title-box p {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .info-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .info-stat-card {
+            background: #222430;
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-stat-card .num {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #00c6ff;
+        }
+
+        .info-stat-card .lbl {
+            font-size: 0.6rem;
+            color: #888;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .page-meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: #ccc;
+            margin-bottom: 18px;
+        }
+
+        .page-meta-item {
+            display: flex;
+            justify-content: space-between;
+            background: #111218;
+            padding: 8px 10px;
+            border-radius: 6px;
+            align-items: center;
+        }
+
+        .visit-store-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #0084ff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+            padding: 10px;
+            background: #2a2b36;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search product ads e.g., brush, shoes..." value="silicone brush">
-            <button onclick="applyFilters()">Search Ads</button>
+            <input type="text" id="searchInput" placeholder="Search keywords..." oninput="applyFilters()">
+            <button onclick="applyFilters()">Search</button>
         </div>
+        
         <div class="filters-grid">
-            <select id="countryFilter" onchange="applyFilters()">
-                <option value="IN">Country: India 🇮🇳</option>
-                <option value="US">Country: USA 🇺🇸</option>
-                <option value="GB">Country: UK 🇬🇧</option>
-                <option value="CA">Country: Canada 🇨🇦</option>
-                <option value="ALL">Country: All</option>
-            </select>
-            <select id="statusFilter" onchange="applyFilters()">
-                <option value="ALL">Status: All</option>
-                <option value="ACTIVE">Status: Active Only</option>
-                <option value="INACTIVE">Status: Inactive</option>
-            </select>
+            <div class="filter-group">
+                <select id="countryFilter" onchange="applyFilters()">
+                    <option value="ALL">All Countries</option>
+                    <option value="IN">India 🇮🇳</option>
+                    <option value="US">United States 🇺🇸</option>
+                    <option value="GB">United Kingdom 🇬🇧</option>
+                    <option value="CA">Canada 🇨🇦</option>
+                    <option value="AU">Australia 🇦🇺</option>
+                    <option value="DE">Germany 🇩🇪</option>
+                    <option value="AE">UAE 🇦🇪</option>
+                    <option value="SG">Singapore 🇸🇬</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <select id="statusFilter" onchange="applyFilters()">
+                    <option value="ALL">All Status</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="INACTIVE">Inactive</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <select id="languageFilter" onchange="applyFilters()">
+                    <option value="ALL">All Languages</option>
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="de">German</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <select id="platformFilter" onchange="applyFilters()">
+                    <option value="ALL">All Platforms</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Audience Network">Audience Network</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <input type="date" id="startDate" onchange="applyFilters()" title="Start Date">
+            </div>
+
+            <div class="filter-group">
+                <input type="date" id="endDate" onchange="applyFilters()" title="End Date">
+            </div>
         </div>
     </header>
 
-    <div class="reels-container" id="reelsFeed"></div>
+    <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
+
+    <!-- Advertiser Info Modal -->
+    <div class="modal-overlay" id="pageInfoModal" onclick="closePageInfo()">
+        <div class="modal-drawer" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <img id="mDp" class="modal-dp" src="" alt="DP">
+                <div class="modal-title-box">
+                    <h3 id="mTitle">Brand <span style="color:#0084ff;">☑️</span></h3>
+                    <p id="mCategory">E-Commerce Page</p>
+                </div>
+            </div>
+
+            <div class="info-stats-grid">
+                <div class="info-stat-card">
+                    <div class="num" id="mFollowers">45.2K</div>
+                    <div class="lbl">Followers</div>
+                </div>
+                <div class="info-stat-card">
+                    <div class="num" id="mActiveAds">12</div>
+                    <div class="lbl">Active Ads</div>
+                </div>
+                <div class="info-stat-card">
+                    <div class="num" id="mPageAge">2 Yrs</div>
+                    <div class="lbl">Page Age</div>
+                </div>
+            </div>
+
+            <div class="page-meta-list">
+                <div class="page-meta-item">
+                    <span>Store / Landing Page:</span>
+                    <a id="mStoreLink" href="#" target="_blank" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">happyplaneta.com</a>
+                </div>
+                <div class="page-meta-item">
+                    <span>Page Creation Date:</span>
+                    <strong id="mCreatedDate" style="color:#fff;">Jan 15, 2024</strong>
+                </div>
+                <div class="page-meta-item">
+                    <span>Instagram Handle:</span>
+                    <strong id="mInstaHandle" style="color:#00c6ff;">@brand_official</strong>
+                </div>
+                <div class="page-meta-item">
+                    <span>Facebook Page ID:</span>
+                    <strong id="mPageId" style="color:#aaa;">109283749201</strong>
+                </div>
+            </div>
+
+            <a id="mDirectStoreBtn" href="#" target="_blank" class="visit-store-btn">Visit Official Store 🛍️ ↗</a>
+            <button class="close-modal-btn" onclick="closePageInfo()">Close Info</button>
+        </div>
+    </div>
 
     <script>
         const brandNames = ["Uniqly.IN", "Aura Care", "Urban Style", "FitFlex Pro", "PureBlend", "Nordic Gear", "ChefPro Kitchen", "NovaSound Audio"];
@@ -77,104 +587,284 @@
             "https://www.w3schools.com/html/movie.mp4"
         ];
 
+        // Working test sites pool so CTA buttons open real pages
+        const realTestStores = [
+            "https://happyplaneta.com",
+            "https://plans.happyplaneta.com",
+            "https://www.amazon.in",
+            "https://www.flipkart.com",
+            "https://www.shopify.com",
+            "https://www.myntra.com"
+        ];
+
+        const countries = ["IN", "US", "GB", "CA", "AU", "DE", "AE", "SG"];
+        const languages = ["en", "hi", "de"];
+        const platformsList = [["Facebook", "Instagram"], ["Instagram"], ["Facebook"], ["Audience Network", "Instagram"]];
+
         let adCounter = Math.floor(Math.random() * 1000) + 100;
+        let isFetching = false;
+        let currentAdsStore = {};
 
-        function createAdCard(id, query, countryFilter, statusFilter) {
-            const isVideo = (id % 2 === 0);
-            const brand = brandNames[id % brandNames.length];
-            const category = categories[id % categories.length];
-            const searchKeyword = query || "silicone brush";
-            const adCopy = `Special deal on ${searchKeyword}! High performance, premium quality. Order today with free shipping!`;
+        const TODAY = new Date('2026-09-26');
 
-            const country = (countryFilter !== 'ALL') ? countryFilter : "IN";
-            const status = (statusFilter !== 'ALL') ? statusFilter : ((id % 2 === 0) ? "ACTIVE" : "INACTIVE");
+        function calculateDaysRunning(startStr, endStr, status) {
+            const start = new Date(startStr);
+            const end = status === "ACTIVE" ? TODAY : new Date(endStr);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays === 0 ? 1 : diffDays;
+        }
 
-            const videoUrl = `${videoSources[id % videoSources.length]}?v=${id}`;
-            const imageUrl = `https://picsum.photos/seed/ad_${id}/600/1000`;
-            const dpUrl = `https://picsum.photos/seed/dp_${id}/150/150`;
-
-            // CTA links directly to Meta's public Ad Library search feed for that exact query & country
-            const liveStoreUrl = `https://www.facebook.com/ads/library/?active_status=${status.toLowerCase()}&ad_type=all&country=${country}&q=${encodeURIComponent(searchKeyword + ' ' + brand)}`;
-            const adLibraryUrl = `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=${country}&q=${encodeURIComponent(searchKeyword)}`;
-
+        function getActiveFilters() {
             return {
-                id: `ad_${id}`,
-                isVideo: isVideo,
-                brandName: brand,
-                category: category,
-                dp: dpUrl,
-                mediaUrl: isVideo ? videoUrl : imageUrl,
-                poster: imageUrl,
-                status: status,
-                country: country,
-                adCopy: adCopy,
-                storeUrl: liveStoreUrl,
-                adLibraryUrl: adLibraryUrl,
-                daysRunning: (id % 15) + 1
+                query: document.getElementById('searchInput').value.toLowerCase().trim(),
+                country: document.getElementById('countryFilter').value,
+                status: document.getElementById('statusFilter').value,
+                language: document.getElementById('languageFilter').value,
+                platform: document.getElementById('platformFilter').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
             };
         }
 
-        function renderCards() {
-            const feedContainer = document.getElementById('reelsFeed');
-            const query = document.getElementById('searchInput').value.trim();
-            const country = document.getElementById('countryFilter').value;
-            const status = document.getElementById('statusFilter').value;
+        function createUniqueAdCard(filters) {
+            adCounter++;
+            const currentId = adCounter;
+            
+            const isVideo = (currentId % 2 === 0);
+            const brand = brandNames[currentId % brandNames.length];
+            const category = categories[currentId % categories.length];
+            const adCopy = `Special deal on 2-in-1 Silicone Foot Cleaning Brush! Grab yours today with free shipping!`;
 
-            let html = '';
-            for (let i = 1; i <= 10; i++) {
-                const ad = createAdCard(adCounter + i, query, country, status);
+            const country = (filters.country !== 'ALL') ? filters.country : countries[currentId % countries.length];
+            const status = (filters.status !== 'ALL') ? filters.status : ((currentId % 2 === 0) ? "ACTIVE" : "INACTIVE");
+            const lang = (filters.language !== 'ALL') ? filters.language : languages[currentId % languages.length];
+            const platforms = (filters.platform !== 'ALL') ? [filters.platform] : platformsList[currentId % platformsList.length];
 
-                const mediaElement = ad.isVideo 
-                    ? `<video src="${ad.mediaUrl}" poster="${ad.poster}" autoplay loop muted playsinline class="media-content"></video>`
-                    : `<img src="${ad.mediaUrl}" alt="Ad Creative" class="media-content">`;
+            const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
+            const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
+            const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
 
-                html += `
-                <div class="reel" data-id="${ad.id}">
-                    ${mediaElement}
+            // Pull live active URL from the pool
+            const exactStoreUrl = realTestStores[currentId % realTestStores.length];
+            const adLibraryUrl = `https://www.facebook.com/ads/library/?id=${1000000000 + currentId}`;
+
+            let startDate = filters.startDate;
+            if (!startDate) {
+                const daysAgo = (currentId % 30) + 1; 
+                const startDateObj = new Date('2026-09-26');
+                startDateObj.setDate(startDateObj.getDate() - daysAgo);
+                startDate = startDateObj.toISOString().split('T')[0];
+            }
+
+            let endDate = "Running Now";
+            if (status === "INACTIVE") {
+                if (filters.endDate) {
+                    endDate = filters.endDate;
+                } else {
+                    const startDateObj = new Date(startDate);
+                    const endDateObj = new Date(startDateObj);
+                    endDateObj.setDate(endDateObj.getDate() + 5);
+                    endDate = endDateObj.toISOString().split('T')[0];
+                }
+            }
+
+            const daysRunning = calculateDaysRunning(startDate, endDate, status);
+
+            const adObj = {
+                id: `ad_${currentId}`,
+                type: isVideo ? "video" : "image",
+                brandName: brand,
+                category: category,
+                dp: dpUrl,
+                poster: imageUrl,
+                mediaUrl: isVideo ? videoUrl : imageUrl,
+                startDate: startDate,
+                endDate: endDate,
+                daysRunning: daysRunning,
+                status: status,
+                country: country,
+                language: lang,
+                platforms: platforms,
+                adCopy: adCopy,
+                storeUrl: exactStoreUrl,
+                adLibraryUrl: adLibraryUrl,
+                followers: `${(currentId * 1.7).toFixed(1)}K`,
+                activeAds: (currentId % 18) + 2,
+                pageAge: `${(currentId % 5) + 1} Yrs`,
+                createdDate: `20${21 + (currentId % 4)}-0${(currentId % 8) + 1}-12`,
+                instaHandle: `@${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}_official`,
+                pageId: `10928374${currentId}`
+            };
+
+            currentAdsStore[adObj.id] = adObj;
+            return adObj;
+        }
+
+        const feedContainer = document.getElementById('reelsFeed');
+
+        function renderCards(ads, append = false) {
+            if (!append && ads.length === 0) {
+                feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
+                return;
+            }
+
+            const html = ads.map((ad) => {
+                const mediaHTML = ad.type === 'video' 
+                    ? `<video loop playsinline muted autoplay webkit-playsinline src="${ad.mediaUrl}"></video>`
+                    : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
+
+                return `
+                <div class="reel" data-id="${ad.id}" onclick="togglePlay(this)">
+                    ${mediaHTML}
                     <div class="overlay-gradient"></div>
                     
                     <div class="top-meta">
-                        <div class="profile-chip">
+                        <div class="profile-chip" onclick="event.stopPropagation(); showPageInfo('${ad.id}')">
                             <img class="profile-dp" src="${ad.dp}" alt="DP">
-                            <div>
-                                <div class="brand-name">${ad.brandName} <span style="color:#0084ff;">☑️</span></div>
+                            <div class="profile-info">
+                                <span class="brand-name">${ad.brandName} <span style="color:#0084ff; font-size:0.7rem;">☑️</span></span>
+                                <span class="page-category">${ad.category}</span>
                             </div>
                         </div>
-                        <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">${ad.status}</span>
+
+                        <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">
+                            ${ad.status}
+                        </span>
+                    </div>
+
+                    <div class="side-actions">
+                        <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" class="action-btn" onclick="event.stopPropagation();" title="Visit Store">🛍️</a>
+                        <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')" title="Page Details">ℹ️</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.storeUrl}'); alert('Store Link Copied!')" title="Copy Link">🔗</div>
                     </div>
 
                     <div class="bottom-details">
                         <div class="tags-row">
-                            <span class="tag tag-highlight">🔥 ${ad.category}</span>
+                            <span class="tag tag-highlight">⏱️ ${ad.daysRunning} ${ad.daysRunning === 1 ? 'Day' : 'Days'} Running</span>
+                            <span class="tag">${ad.type === 'video' ? '🎥 Video' : '🖼️ Image'}</span>
                             <span class="tag">🌐 ${ad.country}</span>
-                            <span class="tag">📅 Running: ${ad.daysRunning} Days</span>
+                            <span class="tag">🗣️ ${ad.language.toUpperCase()}</span>
+                            ${ad.platforms.map(p => `<span class="tag">${p}</span>`).join('')}
                         </div>
 
                         <p class="ad-copy">${ad.adCopy}</p>
+                        
+                        <div class="insights-grid">
+                            <div class="metric-box">
+                                <div class="label">Started Date</div>
+                                <div class="val">${ad.startDate}</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="label">End Date</div>
+                                <div class="val">${ad.endDate}</div>
+                            </div>
+                        </div>
 
                         <div class="cta-row">
-                            <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-store">
-                                Visit Live Ad / Store 🛍️ ↗
-                            </a>
-                            <a href="${ad.adLibraryUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-library">
-                                Meta Library ➔
-                            </a>
+                            <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-store">Visit Store 🛍️ ↗</a>
+                            <a href="${ad.adLibraryUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-library">Ad Library ➔</a>
                         </div>
                     </div>
                 </div>
                 `;
+            }).join('');
+
+            if (append) {
+                feedContainer.insertAdjacentHTML('beforeend', html);
+            } else {
+                feedContainer.innerHTML = html;
+                feedContainer.scrollTop = 0;
             }
-            feedContainer.innerHTML = html;
+
+            setupObserver();
+        }
+
+        function showPageInfo(adId) {
+            const ad = currentAdsStore[adId];
+            if (!ad) return;
+
+            document.getElementById('mDp').src = ad.dp;
+            document.getElementById('mTitle').innerHTML = `${ad.brandName} <span style="color:#0084ff;">☑️</span>`;
+            document.getElementById('mCategory').innerText = ad.category;
+            document.getElementById('mFollowers').innerText = ad.followers;
+            document.getElementById('mActiveAds').innerText = ad.activeAds;
+            document.getElementById('mPageAge').innerText = ad.pageAge;
+            document.getElementById('mCreatedDate').innerText = ad.createdDate;
+            document.getElementById('mInstaHandle').innerText = ad.instaHandle;
+            document.getElementById('mPageId').innerText = ad.pageId;
+            
+            const storeLink = document.getElementById('mStoreLink');
+            storeLink.href = ad.storeUrl;
+            storeLink.innerText = ad.storeUrl.replace('https://', '');
+
+            document.getElementById('mDirectStoreBtn').href = ad.storeUrl;
+
+            document.getElementById('pageInfoModal').classList.add('active');
+        }
+
+        function closePageInfo() {
+            document.getElementById('pageInfoModal').classList.remove('active');
         }
 
         function applyFilters() {
-            adCounter += 10;
-            renderCards();
+            currentAdsStore = {};
+            const filters = getActiveFilters();
+            const initialBatch = [];
+            for (let i = 0; i < 5; i++) {
+                initialBatch.push(createUniqueAdCard(filters));
+            }
+            renderCards(initialBatch, false);
         }
 
-        window.onload = () => {
-            renderCards();
-        };
+        function checkInfiniteScroll() {
+            if (isFetching) return;
+
+            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 500) {
+                isFetching = true;
+                const filters = getActiveFilters();
+                const newBatch = [];
+                for (let i = 0; i < 4; i++) {
+                    newBatch.push(createUniqueAdCard(filters));
+                }
+                renderCards(newBatch, true);
+                setTimeout(() => { isFetching = false; }, 250);
+            }
+        }
+
+        function togglePlay(reelElem) {
+            const video = reelElem.querySelector('video');
+            if (video) {
+                if (video.paused) {
+                    video.play().catch(() => {});
+                } else {
+                    video.pause();
+                }
+            }
+        }
+
+        function setupObserver() {
+            const reels = document.querySelectorAll('.reel');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (video) {
+                        if (entry.isIntersecting) {
+                            video.play().catch(() => {});
+                        } else {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            reels.forEach(reel => observer.observe(reel));
+        }
+
+        // Initialize Feed
+        applyFilters();
     </script>
 </body>
-</html>
+                                              </html>
+    
