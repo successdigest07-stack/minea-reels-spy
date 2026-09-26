@@ -206,15 +206,16 @@
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             backdrop-filter: blur(5px);
+            text-decoration: none;
         }
 
         .bottom-details {
@@ -286,19 +287,46 @@
             margin-top: 1px;
         }
 
-        .cta-btn {
-            display: block;
-            width: 100%;
+        /* Dual Action CTA Row */
+        .cta-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .cta-btn-store {
+            flex: 1;
             padding: 8px;
-            background: #0084ff;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
             color: white;
             text-align: center;
             text-decoration: none;
             font-weight: bold;
             border-radius: 6px;
-            font-size: 0.78rem;
-            box-shadow: 0 4px 12px rgba(0, 132, 255, 0.3);
-            margin-top: 2px;
+            font-size: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 114, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .cta-btn-library {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
 
         /* Advertiser Info Drawer Modal */
@@ -408,6 +436,21 @@
             background: #111218;
             padding: 8px 10px;
             border-radius: 6px;
+            align-items: center;
+        }
+
+        .visit-store-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #0084ff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
         }
 
         .close-modal-btn {
@@ -512,6 +555,10 @@
 
             <div class="page-meta-list">
                 <div class="page-meta-item">
+                    <span>Store / Landing Page:</span>
+                    <a id="mStoreLink" href="#" target="_blank" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">visit-store.com</a>
+                </div>
+                <div class="page-meta-item">
                     <span>Page Creation Date:</span>
                     <strong id="mCreatedDate" style="color:#fff;">Jan 15, 2024</strong>
                 </div>
@@ -523,12 +570,9 @@
                     <span>Facebook Page ID:</span>
                     <strong id="mPageId" style="color:#aaa;">109283749201</strong>
                 </div>
-                <div class="page-meta-item">
-                    <span>Primary Location:</span>
-                    <strong id="mLocation" style="color:#fff;">India 🇮🇳</strong>
-                </div>
             </div>
 
+            <a id="mDirectStoreBtn" href="#" target="_blank" class="visit-store-btn">Visit Official Store 🛍️ ↗</a>
             <button class="close-modal-btn" onclick="closePageInfo()">Close Info</button>
         </div>
     </div>
@@ -537,6 +581,13 @@
         const brandNames = ["Aura Care", "Urban Style", "Kesh Pure", "FitFlex Pro", "PureBlend", "Nordic Gear", "VelvetGlow", "ChefPro Kitchen", "NovaSound Audio", "ZenDesk Studio", "HydroPeak", "GlowUp Lab"];
         const categories = ["E-Commerce Brand", "Beauty & Skincare", "Fashion & Apparel", "Health & Fitness", "Consumer Electronics", "Home & Kitchen", "Footwear Store"];
         
+        const storeUrls = [
+            "https://happyplaneta.com",
+            "https://plans.happyplaneta.com",
+            "https://shopify.com",
+            "https://amazon.com"
+        ];
+
         const videoSources = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
@@ -590,6 +641,7 @@
             const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
             const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
             const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
+            const storeUrl = storeUrls[currentId % storeUrls.length];
 
             let startDate = filters.startDate;
             if (!startDate) {
@@ -629,8 +681,8 @@
                 language: lang,
                 platforms: platforms,
                 adCopy: adCopy,
-                landingPage: "https://facebook.com/ads/library",
-                // Advertiser Info
+                storeUrl: storeUrl,
+                adLibraryUrl: "https://facebook.com/ads/library",
                 followers: `${(currentId * 1.7).toFixed(1)}K`,
                 activeAds: (currentId % 18) + 2,
                 pageAge: `${(currentId % 5) + 1} Yrs`,
@@ -676,9 +728,9 @@
                     </div>
 
                     <div class="side-actions">
-                        <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')">ℹ️</div>
-                        <div class="action-btn" onclick="event.stopPropagation(); alert('Country: ${ad.country} | Lang: ${ad.language}')">🌐</div>
-                        <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.landingPage}'); alert('Link Copied!')">🔗</div>
+                        <a href="${ad.storeUrl}" target="_blank" class="action-btn" onclick="event.stopPropagation();" title="Visit Store">🛍️</a>
+                        <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')" title="Page Details">ℹ️</div>
+                        <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.storeUrl}'); alert('Store Link Copied!')" title="Copy Link">🔗</div>
                     </div>
 
                     <div class="bottom-details">
@@ -703,7 +755,10 @@
                             </div>
                         </div>
 
-                        <a href="${ad.landingPage}" target="_blank" onclick="event.stopPropagation();" class="cta-btn">View in Ad Library ➔</a>
+                        <div class="cta-row">
+                            <a href="${ad.storeUrl}" target="_blank" onclick="event.stopPropagation();" class="cta-btn-store">Visit Store 🛍️ ↗</a>
+                            <a href="${ad.adLibraryUrl}" target="_blank" onclick="event.stopPropagation();" class="cta-btn-library">Ad Library ➔</a>
+                        </div>
                     </div>
                 </div>
                 `;
@@ -732,7 +787,12 @@
             document.getElementById('mCreatedDate').innerText = ad.createdDate;
             document.getElementById('mInstaHandle').innerText = ad.instaHandle;
             document.getElementById('mPageId').innerText = ad.pageId;
-            document.getElementById('mLocation').innerText = `${ad.country} Flag`;
+            
+            const storeLink = document.getElementById('mStoreLink');
+            storeLink.href = ad.storeUrl;
+            storeLink.innerText = ad.storeUrl.replace('https://', '');
+
+            document.getElementById('mDirectStoreBtn').href = ad.storeUrl;
 
             document.getElementById('pageInfoModal').classList.add('active');
         }
@@ -800,5 +860,5 @@
         applyFilters();
     </script>
 </body>
-                        </html>
-    
+            </html>
+                                                                                    
