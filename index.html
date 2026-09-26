@@ -255,7 +255,7 @@
 
     <header>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search keywords..." onkeyup="applyFilters()">
+            <input type="text" id="searchInput" placeholder="Search keywords..." oninput="applyFilters()">
             <button onclick="applyFilters()">Search</button>
         </div>
         
@@ -300,26 +300,20 @@
     <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
 
     <script>
-        const sampleBrands = [
-            "ChefPro Kitchen Tools", "Urban Travel Bag Co.", "Kesh Care Hair Serum", 
-            "Aura Smart Watch Pro", "LumiGlow LED Sunset Lamp", "FitFlex Yoga Mat", 
-            "PureBlend Portable Blender", "VelvetGlow Skincare", "Nordic Coffee Grinder", 
-            "AirStride Running Shoes", "GlowUp LED Mirror", "ZenDesk Ergonomic Chair"
+        const brandPrefixes = ["Aura", "Urban", "Kesh", "Fit", "Pure", "Nordic", "Velvet", "Glow", "Chef", "Nova", "Zen", "Hydro", "Eco"];
+        const brandSuffixes = ["Pro", "Lab", "Care", "Flex", "Blend", "Grinder", "Skin", "Up", "Kitchen", "Audio", "Chair", "Gear"];
+        
+        const copyTemplates = [
+            "Smart automatic kitchen tool. Save 50% time cooking daily!",
+            "Waterproof anti-theft bag with fast charging port.",
+            "Organic nourishing formula for fast shine & strength.",
+            "Track fitness metrics with AMOLED HD display smartwatch.",
+            "Transform your room ambiance with custom LED lighting.",
+            "Non-slip eco-friendly mat designed for daily stability.",
+            "Blend fresh smoothies on the go with portable 6-blade blender."
         ];
 
-        const sampleCopies = [
-            "Smart 3-in-1 automatic vegetable slicer and kitchen chopper. Save 50% time cooking!",
-            "Waterproof anti-theft laptop travel bag with USB charging port. Limited time deal!",
-            "Organic hair growth oil for fast hair fall control and natural shine.",
-            "Track AMOLED HD Display smartwatch with ECG and heart rate monitoring. 60% OFF today!",
-            "Transform your bedroom vibe with 16-color remote controllable sunset projector.",
-            "Non-slip eco-friendly alignment yoga mat with carrying strap.",
-            "Blend smoothies anywhere with wireless rechargeable 6-blade portable kitchen blender.",
-            "Hydrating hyaluronic acid night moisturizer for glass skin effect."
-        ];
-
-        // Guaranteed cross-origin playable MP4 video streams
-        const verifiedVideos = [
+        const reliableVideos = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
             "https://www.w3schools.com/html/movie.mp4"
@@ -329,64 +323,66 @@
         const languages = ["en", "hi", "de"];
         const platformsList = [["Facebook", "Instagram"], ["Instagram"], ["Facebook"], ["Audience Network", "Instagram"]];
 
-        let loadedAds = [];
-        let autoId = 101;
+        let autoId = 1000;
         let isFetching = false;
 
-        function generateRandomAd(forcedStatus = null, forcedCountry = null, forcedLang = null) {
-            const isVideo = Math.random() > 0.3; // 70% Videos, 30% Images
-            const brand = sampleBrands[Math.floor(Math.random() * sampleBrands.length)];
-            const copy = sampleCopies[Math.floor(Math.random() * sampleCopies.length)];
-            
-            const country = forcedCountry && forcedCountry !== 'ALL' ? forcedCountry : countries[Math.floor(Math.random() * countries.length)];
-            const lang = forcedLang && forcedLang !== 'ALL' ? forcedLang : languages[Math.floor(Math.random() * languages.length)];
-            const platforms = platformsList[Math.floor(Math.random() * platformsList.length)];
-            
-            let status = forcedStatus && forcedStatus !== 'ALL' ? forcedStatus : (Math.random() > 0.3 ? "ACTIVE" : "INACTIVE");
-            const randomImgId = Math.floor(Math.random() * 1000) + 1;
+        function getActiveFilters() {
+            return {
+                query: document.getElementById('searchInput').value.toLowerCase().trim(),
+                country: document.getElementById('countryFilter').value,
+                status: document.getElementById('statusFilter').value,
+                language: document.getElementById('languageFilter').value,
+                platform: document.getElementById('platformFilter').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
+            };
+        }
 
-            const videoSrc = verifiedVideos[autoId % verifiedVideos.length];
-            const imageSrc = `https://picsum.photos/id/${randomImgId}/600/1000`;
+        function createUniqueAd(filters) {
+            autoId++;
+            const isVideo = (autoId % 3 !== 0); // 66% Videos, 33% Images
+            
+            const brand = `${brandPrefixes[autoId % brandPrefixes.length]} ${brandSuffixes[(autoId + 3) % brandSuffixes.length]}`;
+            const adCopy = `${copyTemplates[autoId % copyTemplates.length]} (#${autoId})`;
+            
+            const country = (filters.country !== 'ALL') ? filters.country : countries[autoId % countries.length];
+            const status = (filters.status !== 'ALL') ? filters.status : ((autoId % 2 === 0) ? "ACTIVE" : "INACTIVE");
+            const lang = (filters.language !== 'ALL') ? filters.language : languages[autoId % languages.length];
+            const platforms = (filters.platform !== 'ALL') ? [filters.platform] : platformsList[autoId % platformsList.length];
+
+            const imageSrc = `https://picsum.photos/seed/${autoId}/600/1000`;
+            const videoSrc = reliableVideos[autoId % reliableVideos.length];
+
+            const startDay = (autoId % 20) + 1;
+            const startDate = `2026-0${(autoId % 2) + 1}-${startDay < 10 ? '0' + startDay : startDay}`;
+            const endDate = status === "ACTIVE" ? "Running Now" : "2026-03-01";
 
             return {
-                id: `ad_${autoId++}`,
+                id: `ad_${autoId}`,
                 type: isVideo ? "video" : "image",
                 brandName: brand,
                 poster: imageSrc,
                 mediaUrl: isVideo ? videoSrc : imageSrc,
-                startDate: "2026-01-10",
-                endDate: status === "ACTIVE" ? "Running Now" : "2026-02-15",
+                startDate: startDate,
+                endDate: endDate,
                 status: status,
                 country: country,
                 language: lang,
                 platforms: platforms,
-                adCopy: copy,
+                adCopy: adCopy,
                 landingPage: "https://facebook.com/ads/library"
             };
         }
 
-        function loadMoreAds(count = 6) {
-            const countryVal = document.getElementById('countryFilter').value;
-            const statusVal = document.getElementById('statusFilter').value;
-            const langVal = document.getElementById('languageFilter').value;
-
-            const newBatch = [];
-            for (let i = 0; i < count; i++) {
-                newBatch.push(generateRandomAd(statusVal, countryVal, langVal));
-            }
-            loadedAds.push(...newBatch);
-            return newBatch;
-        }
-
         const feedContainer = document.getElementById('reelsFeed');
 
-        function renderFeed(data, append = false) {
-            if (data.length === 0 && !append) {
+        function renderAdCards(adsArray, append = false) {
+            if (!append && adsArray.length === 0) {
                 feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
                 return;
             }
 
-            const html = data.map((ad) => {
+            const html = adsArray.map((ad) => {
                 const mediaHTML = ad.type === 'video' 
                     ? `<video loop playsinline muted autoplay webkit-playsinline src="${ad.mediaUrl}"></video>`
                     : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
@@ -440,23 +436,38 @@
                 feedContainer.insertAdjacentHTML('beforeend', html);
             } else {
                 feedContainer.innerHTML = html;
+                feedContainer.scrollTop = 0;
             }
 
-            setupAutoplay();
+            setupAutoplayObserver();
+        }
+
+        function appendBatch(count = 5) {
+            const filters = getActiveFilters();
+            const batch = [];
+            for (let i = 0; i < count; i++) {
+                batch.push(createUniqueAd(filters));
+            }
+            renderAdCards(batch, true);
+        }
+
+        function applyFilters() {
+            feedContainer.innerHTML = '';
+            const filters = getActiveFilters();
+            const initialBatch = [];
+            for (let i = 0; i < 6; i++) {
+                initialBatch.push(createUniqueAd(filters));
+            }
+            renderAdCards(initialBatch, false);
         }
 
         function checkInfiniteScroll() {
             if (isFetching) return;
 
-            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 800) {
+            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 600) {
                 isFetching = true;
-                const batch = loadMoreAds(5);
-                
-                // Re-apply strict current filters before appending
-                const filteredBatch = getFilteredSet(batch);
-                renderFeed(filteredBatch, true);
-                
-                setTimeout(() => { isFetching = false; }, 300);
+                appendBatch(4);
+                setTimeout(() => { isFetching = false; }, 200);
             }
         }
 
@@ -471,30 +482,7 @@
             }
         }
 
-        function getFilteredSet(adsArray) {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const country = document.getElementById('countryFilter').value;
-            const status = document.getElementById('statusFilter').value;
-            const language = document.getElementById('languageFilter').value;
-            const platform = document.getElementById('platformFilter').value;
-
-            return adsArray.filter(ad => {
-                const matchesQuery = !query || ad.brandName.toLowerCase().includes(query) || ad.adCopy.toLowerCase().includes(query);
-                const matchesCountry = country === 'ALL' || ad.country === country;
-                const matchesStatus = status === 'ALL' || ad.status === status;
-                const matchesLang = language === 'ALL' || ad.language === language;
-                const matchesPlatform = platform === 'ALL' || ad.platforms.includes(platform);
-
-                return matchesQuery && matchesCountry && matchesStatus && matchesLang && matchesPlatform;
-            });
-        }
-
-        function applyFilters() {
-            const filtered = getFilteredSet(loadedAds);
-            renderFeed(filtered, false);
-        }
-
-        function setupAutoplay() {
+        function setupAutoplayObserver() {
             const reels = document.querySelectorAll('.reel');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -513,8 +501,7 @@
             reels.forEach(reel => observer.observe(reel));
         }
 
-        // Initialize
-        loadMoreAds(10);
+        // Initialize Feed
         applyFilters();
     </script>
 </body>
