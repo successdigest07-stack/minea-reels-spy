@@ -304,8 +304,7 @@
             "ChefPro Kitchen Tools", "Urban Travel Bag Co.", "Kesh Care Hair Serum", 
             "Aura Smart Watch Pro", "LumiGlow LED Sunset Lamp", "FitFlex Yoga Mat", 
             "PureBlend Portable Blender", "VelvetGlow Skincare", "Nordic Coffee Grinder", 
-            "AirStride Running Shoes", "GlowUp LED Mirror", "ZenDesk Ergonomic Chair",
-            "NovaSound Earbuds", "HydroPeak Water Bottle", "SilkSoft Sleep Mask"
+            "AirStride Running Shoes", "GlowUp LED Mirror", "ZenDesk Ergonomic Chair"
         ];
 
         const sampleCopies = [
@@ -316,20 +315,14 @@
             "Transform your bedroom vibe with 16-color remote controllable sunset projector.",
             "Non-slip eco-friendly alignment yoga mat with carrying strap.",
             "Blend smoothies anywhere with wireless rechargeable 6-blade portable kitchen blender.",
-            "Hydrating hyaluronic acid night moisturizer for glass skin effect.",
-            "Experience studio quality active noise-cancelling wireless audio with 40h battery.",
-            "Insulated stainless steel water bottle keeps drinks cold for 24 hours."
+            "Hydrating hyaluronic acid night moisturizer for glass skin effect."
         ];
 
-        const videoPool = [
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackBranding.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+        // Guaranteed cross-origin playable MP4 video streams
+        const verifiedVideos = [
+            "https://www.w3schools.com/html/mov_bbb.mp4",
+            "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+            "https://www.w3schools.com/html/movie.mp4"
         ];
 
         const countries = ["IN", "US", "GB", "CA", "AU", "DE", "AE", "SG"];
@@ -340,18 +333,20 @@
         let autoId = 101;
         let isFetching = false;
 
-        function generateRandomAd() {
-            const isVideo = Math.random() > 0.35; // 65% video ads, 35% image ads
+        function generateRandomAd(forcedStatus = null, forcedCountry = null, forcedLang = null) {
+            const isVideo = Math.random() > 0.3; // 70% Videos, 30% Images
             const brand = sampleBrands[Math.floor(Math.random() * sampleBrands.length)];
             const copy = sampleCopies[Math.floor(Math.random() * sampleCopies.length)];
-            const country = countries[Math.floor(Math.random() * countries.length)];
-            const lang = languages[Math.floor(Math.random() * languages.length)];
+            
+            const country = forcedCountry && forcedCountry !== 'ALL' ? forcedCountry : countries[Math.floor(Math.random() * countries.length)];
+            const lang = forcedLang && forcedLang !== 'ALL' ? forcedLang : languages[Math.floor(Math.random() * languages.length)];
             const platforms = platformsList[Math.floor(Math.random() * platformsList.length)];
-            const status = Math.random() > 0.2 ? "ACTIVE" : "INACTIVE";
-            const randomImgId = Math.floor(Math.random() * 1000);
+            
+            let status = forcedStatus && forcedStatus !== 'ALL' ? forcedStatus : (Math.random() > 0.3 ? "ACTIVE" : "INACTIVE");
+            const randomImgId = Math.floor(Math.random() * 1000) + 1;
 
-            const videoSrc = videoPool[autoId % videoPool.length];
-            const imageSrc = `https://picsum.photos/seed/${randomImgId}/600/1000`;
+            const videoSrc = verifiedVideos[autoId % verifiedVideos.length];
+            const imageSrc = `https://picsum.photos/id/${randomImgId}/600/1000`;
 
             return {
                 id: `ad_${autoId++}`,
@@ -359,7 +354,7 @@
                 brandName: brand,
                 poster: imageSrc,
                 mediaUrl: isVideo ? videoSrc : imageSrc,
-                startDate: `2026-0${Math.floor(Math.random() * 2) + 1}-${Math.floor(Math.random() * 20) + 10}`,
+                startDate: "2026-01-10",
                 endDate: status === "ACTIVE" ? "Running Now" : "2026-02-15",
                 status: status,
                 country: country,
@@ -370,10 +365,14 @@
             };
         }
 
-        function loadMoreAds(count = 5) {
+        function loadMoreAds(count = 6) {
+            const countryVal = document.getElementById('countryFilter').value;
+            const statusVal = document.getElementById('statusFilter').value;
+            const langVal = document.getElementById('languageFilter').value;
+
             const newBatch = [];
             for (let i = 0; i < count; i++) {
-                newBatch.push(generateRandomAd());
+                newBatch.push(generateRandomAd(statusVal, countryVal, langVal));
             }
             loadedAds.push(...newBatch);
             return newBatch;
@@ -389,7 +388,7 @@
 
             const html = data.map((ad) => {
                 const mediaHTML = ad.type === 'video' 
-                    ? `<video loop playsinline muted autoplay webkit-playsinline poster="${ad.poster}" src="${ad.mediaUrl}"></video>`
+                    ? `<video loop playsinline muted autoplay webkit-playsinline src="${ad.mediaUrl}"></video>`
                     : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
 
                 return `
@@ -452,7 +451,11 @@
             if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 800) {
                 isFetching = true;
                 const batch = loadMoreAds(5);
-                renderFeed(batch, true);
+                
+                // Re-apply strict current filters before appending
+                const filteredBatch = getFilteredSet(batch);
+                renderFeed(filteredBatch, true);
+                
                 setTimeout(() => { isFetching = false; }, 300);
             }
         }
@@ -468,27 +471,26 @@
             }
         }
 
-        function applyFilters() {
+        function getFilteredSet(adsArray) {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const country = document.getElementById('countryFilter').value;
             const status = document.getElementById('statusFilter').value;
             const language = document.getElementById('languageFilter').value;
             const platform = document.getElementById('platformFilter').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
 
-            const filtered = loadedAds.filter(ad => {
+            return adsArray.filter(ad => {
                 const matchesQuery = !query || ad.brandName.toLowerCase().includes(query) || ad.adCopy.toLowerCase().includes(query);
                 const matchesCountry = country === 'ALL' || ad.country === country;
                 const matchesStatus = status === 'ALL' || ad.status === status;
                 const matchesLang = language === 'ALL' || ad.language === language;
                 const matchesPlatform = platform === 'ALL' || ad.platforms.includes(platform);
-                const matchesStart = !startDate || ad.startDate >= startDate;
-                const matchesEnd = !endDate || (ad.endDate !== 'Running Now' && ad.endDate <= endDate);
 
-                return matchesQuery && matchesCountry && matchesStatus && matchesLang && matchesPlatform && matchesStart && matchesEnd;
+                return matchesQuery && matchesCountry && matchesStatus && matchesLang && matchesPlatform;
             });
+        }
 
+        function applyFilters() {
+            const filtered = getFilteredSet(loadedAds);
             renderFeed(filtered, false);
         }
 
@@ -511,9 +513,9 @@
             reels.forEach(reel => observer.observe(reel));
         }
 
-        // Initialize with first batch
-        loadMoreAds(8);
-        renderFeed(loadedAds);
+        // Initialize
+        loadMoreAds(10);
+        applyFilters();
     </script>
 </body>
 </html>
