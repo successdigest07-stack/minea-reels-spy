@@ -5,6 +5,7 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: node server.js
+    # Configuration update for environment runtime
     envVars:
       - key: META_ACCESS_TOKEN
         sync: false
