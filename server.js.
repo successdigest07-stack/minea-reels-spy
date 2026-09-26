@@ -1,0 +1,89 @@
+require('dotenv').config();
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+
+const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
+
+app.get('/api/search-ads', async (req, res) => {
+    try {
+        const { 
+            query = '', 
+            country = 'IN', 
+            status = 'ACTIVE',
+            limit = 10 
+        } = req.query;
+
+        if (!query) {
+            return res.status(400).json({ error: 'Search query keyword is required.' });
+        }
+
+        if (!META_ACCESS_TOKEN) {
+            return res.status(500).json({ error: 'Meta access token is missing on server.' });
+        }
+
+        const response = await axios.get('https://graph.facebook.com/v19.0/ads_archive', {
+            params: {
+                access_token: META_ACCESS_TOKEN,
+                search_terms: query,
+                ad_reached_countries: [country === 'ALL' ? 'IN' : country],
+                ad_active_status: status === 'ALL' ? 'ALL' : status,
+                fields: 'id,ad_creation_time,ad_delivery_stop_time,ad_creative_bodies,ad_creative_link_captions,ad_creative_link_titles,page_id,page_name,publisher_platforms',
+                limit: parseInt(limit)
+            }
+        });
+
+        const formattedAds = (response.data.data || []).map(ad => {
+            const startDateStr = ad.ad_creation_time ? ad.ad_creation_time.split('T')[0] : 'Unknown';
+            const isActive = !ad.ad_delivery_stop_time;
+
+            return {
+                id: `ad_${ad.id}`,
+                type: 'image',
+                brandName: ad.page_name || 'Verified Advertiser',
+                category: 'E-Commerce Brand',
+                dp: `https://graph.facebook.com/${ad.page_id}/picture?type=square`,
+                mediaUrl: `https://picsum.photos/seed/${ad.id}/600/1000`,
+                startDate: startDateStr,
+                endDate: isActive ? 'Running Now' : ad.ad_delivery_stop_time.split('T')[0],
+                daysRunning: calculateDaysRunning(startDateStr),
+                status: isActive ? 'ACTIVE' : 'INACTIVE',
+                country: country === 'ALL' ? 'IN' : country,
+                language: 'en',
+                platforms: ad.publisher_platforms || ['Instagram', 'Facebook'],
+                adCopy: ad.ad_creative_bodies ? ad.ad_creative_bodies[0] : 'No caption available for this creative.',
+                storeUrl: ad.ad_creative_link_captions ? `https://${ad.ad_creative_link_captions[0]}` : 'https://www.facebook.com',
+                adLibraryUrl: `https://www.facebook.com/ads/library/?id=${ad.id}`,
+                followers: 'N/A',
+                activeAds: 'Active',
+                pageAge: 'Verified',
+                createdDate: startDateStr,
+                instaHandle: `@${(ad.page_name || 'brand').toLowerCase().replace(/[^a-z0-9]/g, '')}`,
+                pageId: ad.page_id
+            };
+        });
+
+        res.json({ success: true, count: formattedAds.length, ads: formattedAds });
+
+    } catch (error) {
+        console.error('Meta API Error:', error.response ? error.response.data : error.message);
+        res.status(500).json({ 
+            error: 'Failed to fetch ads from Meta API', 
+            details: error.response ? error.response.data : error.message 
+        });
+    }
+});
+
+function calculateDaysRunning(startStr) {
+    if (startStr === 'Unknown') return 1;
+    const start = new Date(startStr);
+    const today = new Date();
+    const diffTime = Math.abs(today - start);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+}
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
