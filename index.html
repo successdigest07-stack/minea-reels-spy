@@ -556,7 +556,7 @@
             <div class="page-meta-list">
                 <div class="page-meta-item">
                     <span>Store / Landing Page:</span>
-                    <a id="mStoreLink" href="#" target="_blank" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">visit-store.com</a>
+                    <a id="mStoreLink" href="#" target="_blank" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">happyplaneta.com</a>
                 </div>
                 <div class="page-meta-item">
                     <span>Page Creation Date:</span>
@@ -585,6 +585,16 @@
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
             "https://www.w3schools.com/html/movie.mp4"
+        ];
+
+        // Working test sites pool so CTA buttons open real pages
+        const realTestStores = [
+            "https://happyplaneta.com",
+            "https://plans.happyplaneta.com",
+            "https://www.amazon.in",
+            "https://www.flipkart.com",
+            "https://www.shopify.com",
+            "https://www.myntra.com"
         ];
 
         const countries = ["IN", "US", "GB", "CA", "AU", "DE", "AE", "SG"];
@@ -635,8 +645,8 @@
             const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
             const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
 
-            // Explicit direct store/CTA URL mapping for each card
-            const exactStoreUrl = `https://${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}.com/products/item-${currentId}?ref=meta_ad`;
+            // Pull live active URL from the pool
+            const exactStoreUrl = realTestStores[currentId % realTestStores.length];
             const adLibraryUrl = `https://www.facebook.com/ads/library/?id=${1000000000 + currentId}`;
 
             let startDate = filters.startDate;
@@ -857,4 +867,4 @@
     </script>
 </body>
                         </html>
-                        
+                
