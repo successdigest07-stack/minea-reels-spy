@@ -92,7 +92,7 @@
         .reels-container {
             width: 100%;
             max-width: 480px;
-            flex: 1;
+            height: calc(100vh - 110px);
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
             scrollbar-width: none;
@@ -108,6 +108,7 @@
             width: 100%;
             height: 100%;
             scroll-snap-align: start;
+            scroll-snap-stop: always;
             background: #111;
             display: flex;
             justify-content: center;
@@ -118,6 +119,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
         .overlay-gradient {
@@ -128,9 +130,9 @@
             height: 65%;
             background: linear-gradient(to top, rgba(0,0,0,0.98) 25%, transparent);
             pointer-events: none;
+            z-index: 1;
         }
 
-        /* Profile Header */
         .top-meta {
             position: absolute;
             top: 12px;
@@ -287,7 +289,6 @@
             margin-top: 1px;
         }
 
-        /* Dual Action CTA Row */
         .cta-row {
             display: flex;
             gap: 6px;
@@ -309,6 +310,7 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
+            cursor: pointer;
         }
 
         .cta-btn-library {
@@ -327,9 +329,9 @@
             align-items: center;
             justify-content: center;
             gap: 4px;
+            cursor: pointer;
         }
 
-        /* Advertiser Info Drawer Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -470,27 +472,24 @@
 
     <header>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search keywords..." oninput="applyFilters()">
-            <button onclick="applyFilters()">Search</button>
+            <input type="text" id="searchInput" placeholder="Search keywords...">
+            <button id="searchBtn">Search</button>
         </div>
         
         <div class="filters-grid">
             <div class="filter-group">
-                <select id="countryFilter" onchange="applyFilters()">
+                <select id="countryFilter">
                     <option value="ALL">All Countries</option>
                     <option value="IN">India 🇮🇳</option>
                     <option value="US">United States 🇺🇸</option>
                     <option value="GB">United Kingdom 🇬🇧</option>
                     <option value="CA">Canada 🇨🇦</option>
                     <option value="AU">Australia 🇦🇺</option>
-                    <option value="DE">Germany 🇩🇪</option>
-                    <option value="AE">UAE 🇦🇪</option>
-                    <option value="SG">Singapore 🇸🇬</option>
                 </select>
             </div>
 
             <div class="filter-group">
-                <select id="statusFilter" onchange="applyFilters()">
+                <select id="statusFilter">
                     <option value="ALL">All Status</option>
                     <option value="ACTIVE">Active</option>
                     <option value="INACTIVE">Inactive</option>
@@ -498,37 +497,34 @@
             </div>
 
             <div class="filter-group">
-                <select id="languageFilter" onchange="applyFilters()">
+                <select id="languageFilter">
                     <option value="ALL">All Languages</option>
                     <option value="en">English</option>
                     <option value="hi">Hindi</option>
-                    <option value="de">German</option>
                 </select>
             </div>
 
             <div class="filter-group">
-                <select id="platformFilter" onchange="applyFilters()">
+                <select id="platformFilter">
                     <option value="ALL">All Platforms</option>
                     <option value="Instagram">Instagram</option>
                     <option value="Facebook">Facebook</option>
-                    <option value="Audience Network">Audience Network</option>
                 </select>
             </div>
 
             <div class="filter-group">
-                <input type="date" id="startDate" onchange="applyFilters()" title="Start Date">
+                <input type="date" id="startDate" title="Start Date">
             </div>
 
             <div class="filter-group">
-                <input type="date" id="endDate" onchange="applyFilters()" title="End Date">
+                <input type="date" id="endDate" title="End Date">
             </div>
         </div>
     </header>
 
-    <div class="reels-container" id="reelsFeed" onscroll="checkInfiniteScroll()"></div>
+    <div class="reels-container" id="reelsFeed"></div>
 
-    <!-- Advertiser Info Modal -->
-    <div class="modal-overlay" id="pageInfoModal" onclick="closePageInfo()">
+    <div class="modal-overlay" id="pageInfoModal">
         <div class="modal-drawer" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <img id="mDp" class="modal-dp" src="" alt="DP">
@@ -540,15 +536,15 @@
 
             <div class="info-stats-grid">
                 <div class="info-stat-card">
-                    <div class="num" id="mFollowers">45.2K</div>
+                    <div class="num" id="mFollowers">0</div>
                     <div class="lbl">Followers</div>
                 </div>
                 <div class="info-stat-card">
-                    <div class="num" id="mActiveAds">12</div>
+                    <div class="num" id="mActiveAds">0</div>
                     <div class="lbl">Active Ads</div>
                 </div>
                 <div class="info-stat-card">
-                    <div class="num" id="mPageAge">2 Yrs</div>
+                    <div class="num" id="mPageAge">N/A</div>
                     <div class="lbl">Page Age</div>
                 </div>
             </div>
@@ -556,63 +552,55 @@
             <div class="page-meta-list">
                 <div class="page-meta-item">
                     <span>Store / Landing Page:</span>
-                    <a id="mStoreLink" href="#" target="_blank" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">happyplaneta.com</a>
+                    <a id="mStoreLink" href="#" target="_blank" rel="noopener noreferrer" style="color:#00c6ff; text-decoration:underline; font-weight:bold; overflow:hidden; text-overflow:ellipsis; max-width:180px; white-space:nowrap;">-</a>
                 </div>
                 <div class="page-meta-item">
                     <span>Page Creation Date:</span>
-                    <strong id="mCreatedDate" style="color:#fff;">Jan 15, 2024</strong>
+                    <strong id="mCreatedDate" style="color:#fff;">-</strong>
                 </div>
                 <div class="page-meta-item">
                     <span>Instagram Handle:</span>
-                    <strong id="mInstaHandle" style="color:#00c6ff;">@brand_official</strong>
+                    <strong id="mInstaHandle" style="color:#00c6ff;">-</strong>
                 </div>
                 <div class="page-meta-item">
                     <span>Facebook Page ID:</span>
-                    <strong id="mPageId" style="color:#aaa;">109283749201</strong>
+                    <strong id="mPageId" style="color:#aaa;">-</strong>
                 </div>
             </div>
 
-            <a id="mDirectStoreBtn" href="#" target="_blank" class="visit-store-btn">Visit Official Store 🛍️ ↗</a>
-            <button class="close-modal-btn" onclick="closePageInfo()">Close Info</button>
+            <a id="mDirectStoreBtn" href="#" target="_blank" rel="noopener noreferrer" class="visit-store-btn">Visit Official Store 🛍️ ↗</a>
+            <button class="close-modal-btn" id="closeModalBtn">Close Info</button>
         </div>
     </div>
 
     <script>
-        const brandNames = ["Uniqly.IN", "Aura Care", "Urban Style", "FitFlex Pro", "PureBlend", "Nordic Gear", "ChefPro Kitchen", "NovaSound Audio"];
-        const categories = ["Beauty & Skincare", "E-Commerce Brand", "Fashion & Apparel", "Health & Fitness", "Consumer Electronics", "Home & Kitchen"];
+        // API Proxy endpoint connection
+        const API_CONFIG = {
+            USE_LIVE_API: false, // We will turn this to true once backend API is deployed
+            BACKEND_URL: 'http://localhost:3000/api/search-ads'
+        };
 
+        const brandNames = ["Uniqly.IN", "Aura Care", "Urban Style", "FitFlex Pro", "PureBlend", "Nordic Gear"];
+        const categories = ["Beauty & Skincare", "E-Commerce Brand", "Fashion & Apparel", "Health & Fitness"];
         const videoSources = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
             "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
             "https://www.w3schools.com/html/movie.mp4"
         ];
+        const realTestStores = ["https://happyplaneta.com", "https://plans.happyplaneta.com", "https://www.amazon.in"];
 
-        // Working test sites pool so CTA buttons open real pages
-        const realTestStores = [
-            "https://happyplaneta.com",
-            "https://plans.happyplaneta.com",
-            "https://www.amazon.in",
-            "https://www.flipkart.com",
-            "https://www.shopify.com",
-            "https://www.myntra.com"
-        ];
-
-        const countries = ["IN", "US", "GB", "CA", "AU", "DE", "AE", "SG"];
-        const languages = ["en", "hi", "de"];
-        const platformsList = [["Facebook", "Instagram"], ["Instagram"], ["Facebook"], ["Audience Network", "Instagram"]];
-
-        let adCounter = Math.floor(Math.random() * 1000) + 100;
+        let adCounter = 100;
         let isFetching = false;
         let currentAdsStore = {};
+        let observer = null;
 
-        const TODAY = new Date('2026-09-26');
+        const feedContainer = document.getElementById('reelsFeed');
 
-        function calculateDaysRunning(startStr, endStr, status) {
+        function calculateDaysRunning(startStr) {
             const start = new Date(startStr);
-            const end = status === "ACTIVE" ? TODAY : new Date(endStr);
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays === 0 ? 1 : diffDays;
+            const today = new Date();
+            const diffTime = Math.abs(today - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
         }
 
         function getActiveFilters() {
@@ -627,157 +615,190 @@
             };
         }
 
-        function createUniqueAdCard(filters) {
-            adCounter++;
-            const currentId = adCounter;
-            
-            const isVideo = (currentId % 2 === 0);
-            const brand = brandNames[currentId % brandNames.length];
-            const category = categories[currentId % categories.length];
-            const adCopy = `Special deal on 2-in-1 Silicone Foot Cleaning Brush! Grab yours today with free shipping!`;
-
-            const country = (filters.country !== 'ALL') ? filters.country : countries[currentId % countries.length];
-            const status = (filters.status !== 'ALL') ? filters.status : ((currentId % 2 === 0) ? "ACTIVE" : "INACTIVE");
-            const lang = (filters.language !== 'ALL') ? filters.language : languages[currentId % languages.length];
-            const platforms = (filters.platform !== 'ALL') ? [filters.platform] : platformsList[currentId % platformsList.length];
-
-            const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
-            const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
-            const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
-
-            // Pull live active URL from the pool
-            const exactStoreUrl = realTestStores[currentId % realTestStores.length];
-            const adLibraryUrl = `https://www.facebook.com/ads/library/?id=${1000000000 + currentId}`;
-
-            let startDate = filters.startDate;
-            if (!startDate) {
-                const daysAgo = (currentId % 30) + 1; 
-                const startDateObj = new Date('2026-09-26');
-                startDateObj.setDate(startDateObj.getDate() - daysAgo);
-                startDate = startDateObj.toISOString().split('T')[0];
-            }
-
-            let endDate = "Running Now";
-            if (status === "INACTIVE") {
-                if (filters.endDate) {
-                    endDate = filters.endDate;
-                } else {
-                    const startDateObj = new Date(startDate);
-                    const endDateObj = new Date(startDateObj);
-                    endDateObj.setDate(endDateObj.getDate() + 5);
-                    endDate = endDateObj.toISOString().split('T')[0];
+        async function fetchAdsFromSource(filters) {
+            if (API_CONFIG.USE_LIVE_API) {
+                try {
+                    const queryParams = new URLSearchParams(filters);
+                    const res = await fetch(`${API_CONFIG.BACKEND_URL}?${queryParams}`);
+                    const data = await res.json();
+                    return data.ads || [];
+                } catch (err) {
+                    console.error("Failed to fetch live API data:", err);
+                    return [];
                 }
             }
 
-            const daysRunning = calculateDaysRunning(startDate, endDate, status);
+            // Client-side execution loop fix & smooth test data
+            const mockBatch = [];
+            for (let i = 0; i < 4; i++) {
+                adCounter++;
+                const currentId = adCounter;
+                const isVideo = (currentId % 2 === 0);
+                const brand = brandNames[currentId % brandNames.length];
+                const category = categories[currentId % categories.length];
+                const status = (filters.status !== 'ALL') ? filters.status : (currentId % 2 === 0 ? "ACTIVE" : "INACTIVE");
+                const country = (filters.country !== 'ALL') ? filters.country : "IN";
+                const lang = (filters.language !== 'ALL') ? filters.language : "en";
+                const platform = (filters.platform !== 'ALL') ? filters.platform : "Instagram";
+                const storeUrl = realTestStores[currentId % realTestStores.length];
 
-            const adObj = {
-                id: `ad_${currentId}`,
-                type: isVideo ? "video" : "image",
-                brandName: brand,
-                category: category,
-                dp: dpUrl,
-                poster: imageUrl,
-                mediaUrl: isVideo ? videoUrl : imageUrl,
-                startDate: startDate,
-                endDate: endDate,
-                daysRunning: daysRunning,
-                status: status,
-                country: country,
-                language: lang,
-                platforms: platforms,
-                adCopy: adCopy,
-                storeUrl: exactStoreUrl,
-                adLibraryUrl: adLibraryUrl,
-                followers: `${(currentId * 1.7).toFixed(1)}K`,
-                activeAds: (currentId % 18) + 2,
-                pageAge: `${(currentId % 5) + 1} Yrs`,
-                createdDate: `20${21 + (currentId % 4)}-0${(currentId % 8) + 1}-12`,
-                instaHandle: `@${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}_official`,
-                pageId: `10928374${currentId}`
-            };
-
-            currentAdsStore[adObj.id] = adObj;
-            return adObj;
+                mockBatch.push({
+                    id: `ad_${currentId}`,
+                    type: isVideo ? "video" : "image",
+                    brandName: brand,
+                    category: category,
+                    dp: `https://picsum.photos/seed/dp_${currentId}/150/150`,
+                    mediaUrl: isVideo ? videoSources[currentId % videoSources.length] : `https://picsum.photos/seed/ad_${currentId}/600/1000`,
+                    startDate: "2026-09-01",
+                    endDate: status === "ACTIVE" ? "Running Now" : "2026-09-20",
+                    daysRunning: calculateDaysRunning("2026-09-01"),
+                    status: status,
+                    country: country,
+                    language: lang,
+                    platforms: [platform],
+                    adCopy: `Discover best deals for ${filters.query || 'trending items'}! Fast delivery across India.`,
+                    storeUrl: storeUrl,
+                    adLibraryUrl: `https://www.facebook.com/ads/library/?id=${1000000000 + currentId}`,
+                    followers: `${(currentId * 1.5).toFixed(1)}K`,
+                    activeAds: (currentId % 15) + 1,
+                    pageAge: `${(currentId % 4) + 1} Yrs`,
+                    createdDate: `2022-04-12`,
+                    instaHandle: `@${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}_official`,
+                    pageId: `10928374${currentId}`
+                });
+            }
+            return mockBatch;
         }
 
-        const feedContainer = document.getElementById('reelsFeed');
+        function createCardHTML(ad) {
+            const mediaHTML = ad.type === 'video' 
+                ? `<video loop playsinline muted webkit-playsinline src="${ad.mediaUrl}"></video>`
+                : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
 
-        function renderCards(ads, append = false) {
-            if (!append && ads.length === 0) {
-                feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads match your filters.</div>';
-                return;
-            }
+            return `
+            <div class="reel" data-id="${ad.id}">
+                ${mediaHTML}
+                <div class="overlay-gradient"></div>
+                
+                <div class="top-meta">
+                    <div class="profile-chip" data-action="info" data-id="${ad.id}">
+                        <img class="profile-dp" src="${ad.dp}" alt="DP">
+                        <div class="profile-info">
+                            <span class="brand-name">${ad.brandName} <span style="color:#0084ff; font-size:0.7rem;">☑️</span></span>
+                            <span class="page-category">${ad.category}</span>
+                        </div>
+                    </div>
 
-            const html = ads.map((ad) => {
-                const mediaHTML = ad.type === 'video' 
-                    ? `<video loop playsinline muted autoplay webkit-playsinline src="${ad.mediaUrl}"></video>`
-                    : `<img class="media-content" src="${ad.mediaUrl}" alt="${ad.brandName}">`;
+                    <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">
+                        ${ad.status}
+                    </span>
+                </div>
 
-                return `
-                <div class="reel" data-id="${ad.id}" onclick="togglePlay(this)">
-                    ${mediaHTML}
-                    <div class="overlay-gradient"></div>
+                <div class="side-actions">
+                    <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" class="action-btn" title="Visit Store">🛍️</a>
+                    <button class="action-btn" data-action="info" data-id="${ad.id}" title="Page Details">ℹ️</button>
+                    <button class="action-btn" data-action="copy" data-url="${ad.storeUrl}" title="Copy Link">🔗</button>
+                </div>
+
+                <div class="bottom-details">
+                    <div class="tags-row">
+                        <span class="tag tag-highlight">⏱️ ${ad.daysRunning} Days</span>
+                        <span class="tag">${ad.type === 'video' ? '🎥 Video' : '🖼️ Image'}</span>
+                        <span class="tag">🌐 ${ad.country}</span>
+                        <span class="tag">🗣️ ${ad.language.toUpperCase()}</span>
+                    </div>
+
+                    <p class="ad-copy">${ad.adCopy}</p>
                     
-                    <div class="top-meta">
-                        <div class="profile-chip" onclick="event.stopPropagation(); showPageInfo('${ad.id}')">
-                            <img class="profile-dp" src="${ad.dp}" alt="DP">
-                            <div class="profile-info">
-                                <span class="brand-name">${ad.brandName} <span style="color:#0084ff; font-size:0.7rem;">☑️</span></span>
-                                <span class="page-category">${ad.category}</span>
-                            </div>
+                    <div class="insights-grid">
+                        <div class="metric-box">
+                            <div class="label">Started Date</div>
+                            <div class="val">${ad.startDate}</div>
                         </div>
-
-                        <span class="status-badge ${ad.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">
-                            ${ad.status}
-                        </span>
+                        <div class="metric-box">
+                            <div class="label">End Date</div>
+                            <div class="val">${ad.endDate}</div>
+                        </div>
                     </div>
 
-                    <div class="side-actions">
-                        <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" class="action-btn" onclick="event.stopPropagation();" title="Visit Store">🛍️</a>
-                        <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')" title="Page Details">ℹ️</div>
-                        <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.storeUrl}'); alert('Store Link Copied!')" title="Copy Link">🔗</div>
-                    </div>
-
-                    <div class="bottom-details">
-                        <div class="tags-row">
-                            <span class="tag tag-highlight">⏱️ ${ad.daysRunning} ${ad.daysRunning === 1 ? 'Day' : 'Days'} Running</span>
-                            <span class="tag">${ad.type === 'video' ? '🎥 Video' : '🖼️ Image'}</span>
-                            <span class="tag">🌐 ${ad.country}</span>
-                            <span class="tag">🗣️ ${ad.language.toUpperCase()}</span>
-                            ${ad.platforms.map(p => `<span class="tag">${p}</span>`).join('')}
-                        </div>
-
-                        <p class="ad-copy">${ad.adCopy}</p>
-                        
-                        <div class="insights-grid">
-                            <div class="metric-box">
-                                <div class="label">Started Date</div>
-                                <div class="val">${ad.startDate}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="label">End Date</div>
-                                <div class="val">${ad.endDate}</div>
-                            </div>
-                        </div>
-
-                        <div class="cta-row">
-                            <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-store">Visit Store 🛍️ ↗</a>
-                            <a href="${ad.adLibraryUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-library">Ad Library ➔</a>
-                        </div>
+                    <div class="cta-row">
+                        <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" class="cta-btn-store">Visit Store 🛍️ ↗</a>
+                        <a href="${ad.adLibraryUrl}" target="_blank" rel="noopener noreferrer" class="cta-btn-library">Ad Library ➔</a>
                     </div>
                 </div>
-                `;
-            }).join('');
+            </div>
+            `;
+        }
 
-            if (append) {
-                feedContainer.insertAdjacentHTML('beforeend', html);
-            } else {
-                feedContainer.innerHTML = html;
+        async function renderFeed(append = false) {
+            if (isFetching) return;
+            isFetching = true;
+
+            const filters = getActiveFilters();
+            const ads = await fetchAdsFromSource(filters);
+
+            if (!append) {
+                feedContainer.innerHTML = '';
+                currentAdsStore = {};
                 feedContainer.scrollTop = 0;
             }
 
+            if (ads.length === 0 && !append) {
+                feedContainer.innerHTML = '<div style="text-align:center; padding-top:40%; color:#888;">No ads found matching filters.</div>';
+                isFetching = false;
+                return;
+            }
+
+            ads.forEach(ad => { currentAdsStore[ad.id] = ad; });
+
+            const html = ads.map(ad => createCardHTML(ad)).join('');
+            feedContainer.insertAdjacentHTML('beforeend', html);
+
             setupObserver();
+            isFetching = false;
+        }
+
+        function setupObserver() {
+            if (observer) observer.disconnect();
+
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (video) {
+                        if (entry.isIntersecting) {
+                            video.play().catch(() => {});
+                        } else {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    }
+                });
+            }, { root: feedContainer, threshold: 0.6 });
+
+            document.querySelectorAll('.reel').forEach(reel => observer.observe(reel));
+        }
+
+        function handleFeedScroll() {
+            if (isFetching) return;
+            const scrollBottom = feedContainer.scrollTop + feedContainer.clientHeight;
+            if (scrollBottom >= feedContainer.scrollHeight - 300) {
+                renderFeed(true);
+            }
+        }
+
+        function handleFeedClick(e) {
+            const target = e.target.closest('[data-action]');
+            if (!target) return;
+
+            const action = target.getAttribute('data-action');
+            if (action === 'info') {
+                const id = target.getAttribute('data-id');
+                showPageInfo(id);
+            } else if (action === 'copy') {
+                const url = target.getAttribute('data-url');
+                navigator.clipboard.writeText(url);
+                alert('Store URL copied to clipboard!');
+            }
         }
 
         function showPageInfo(adId) {
@@ -799,7 +820,6 @@
             storeLink.innerText = ad.storeUrl.replace('https://', '');
 
             document.getElementById('mDirectStoreBtn').href = ad.storeUrl;
-
             document.getElementById('pageInfoModal').classList.add('active');
         }
 
@@ -807,64 +827,19 @@
             document.getElementById('pageInfoModal').classList.remove('active');
         }
 
-        function applyFilters() {
-            currentAdsStore = {};
-            const filters = getActiveFilters();
-            const initialBatch = [];
-            for (let i = 0; i < 5; i++) {
-                initialBatch.push(createUniqueAdCard(filters));
-            }
-            renderCards(initialBatch, false);
-        }
+        feedContainer.addEventListener('scroll', handleFeedScroll);
+        feedContainer.addEventListener('click', handleFeedClick);
 
-        function checkInfiniteScroll() {
-            if (isFetching) return;
+        document.getElementById('searchBtn').addEventListener('click', () => renderFeed(false));
+        document.querySelectorAll('header select, header input[type="date"]').forEach(elem => {
+            elem.addEventListener('change', () => renderFeed(false));
+        });
 
-            if (feedContainer.scrollTop + feedContainer.clientHeight >= feedContainer.scrollHeight - 500) {
-                isFetching = true;
-                const filters = getActiveFilters();
-                const newBatch = [];
-                for (let i = 0; i < 4; i++) {
-                    newBatch.push(createUniqueAdCard(filters));
-                }
-                renderCards(newBatch, true);
-                setTimeout(() => { isFetching = false; }, 250);
-            }
-        }
+        document.getElementById('closeModalBtn').addEventListener('click', closePageInfo);
+        document.getElementById('pageInfoModal').addEventListener('click', closePageInfo);
 
-        function togglePlay(reelElem) {
-            const video = reelElem.querySelector('video');
-            if (video) {
-                if (video.paused) {
-                    video.play().catch(() => {});
-                } else {
-                    video.pause();
-                }
-            }
-        }
-
-        function setupObserver() {
-            const reels = document.querySelectorAll('.reel');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (video) {
-                        if (entry.isIntersecting) {
-                            video.play().catch(() => {});
-                        } else {
-                            video.pause();
-                            video.currentTime = 0;
-                        }
-                    }
-                });
-            }, { threshold: 0.6 });
-
-            reels.forEach(reel => observer.observe(reel));
-        }
-
-        // Initialize Feed
-        applyFilters();
+        renderFeed(false);
     </script>
 </body>
-                                              </html>
+    </html>
     
