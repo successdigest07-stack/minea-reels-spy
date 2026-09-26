@@ -578,15 +578,8 @@
     </div>
 
     <script>
-        const brandNames = ["Aura Care", "Urban Style", "Kesh Pure", "FitFlex Pro", "PureBlend", "Nordic Gear", "VelvetGlow", "ChefPro Kitchen", "NovaSound Audio", "ZenDesk Studio", "HydroPeak", "GlowUp Lab"];
-        const categories = ["E-Commerce Brand", "Beauty & Skincare", "Fashion & Apparel", "Health & Fitness", "Consumer Electronics", "Home & Kitchen", "Footwear Store"];
-        
-        const storeUrls = [
-            "https://happyplaneta.com",
-            "https://plans.happyplaneta.com",
-            "https://shopify.com",
-            "https://amazon.com"
-        ];
+        const brandNames = ["Uniqly.IN", "Aura Care", "Urban Style", "FitFlex Pro", "PureBlend", "Nordic Gear", "ChefPro Kitchen", "NovaSound Audio"];
+        const categories = ["Beauty & Skincare", "E-Commerce Brand", "Fashion & Apparel", "Health & Fitness", "Consumer Electronics", "Home & Kitchen"];
 
         const videoSources = [
             "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -631,7 +624,7 @@
             const isVideo = (currentId % 2 === 0);
             const brand = brandNames[currentId % brandNames.length];
             const category = categories[currentId % categories.length];
-            const adCopy = `Special deal on ${category}! High demand item #${currentId}. Grab yours today with free shipping!`;
+            const adCopy = `Special deal on 2-in-1 Silicone Foot Cleaning Brush! Grab yours today with free shipping!`;
 
             const country = (filters.country !== 'ALL') ? filters.country : countries[currentId % countries.length];
             const status = (filters.status !== 'ALL') ? filters.status : ((currentId % 2 === 0) ? "ACTIVE" : "INACTIVE");
@@ -641,7 +634,10 @@
             const videoUrl = `${videoSources[currentId % videoSources.length]}?v=${currentId}`;
             const imageUrl = `https://picsum.photos/seed/ad_${currentId}/600/1000`;
             const dpUrl = `https://picsum.photos/seed/dp_${currentId}/150/150`;
-            const storeUrl = storeUrls[currentId % storeUrls.length];
+
+            // Explicit direct store/CTA URL mapping for each card
+            const exactStoreUrl = `https://${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}.com/products/item-${currentId}?ref=meta_ad`;
+            const adLibraryUrl = `https://www.facebook.com/ads/library/?id=${1000000000 + currentId}`;
 
             let startDate = filters.startDate;
             if (!startDate) {
@@ -681,13 +677,13 @@
                 language: lang,
                 platforms: platforms,
                 adCopy: adCopy,
-                storeUrl: storeUrl,
-                adLibraryUrl: "https://facebook.com/ads/library",
+                storeUrl: exactStoreUrl,
+                adLibraryUrl: adLibraryUrl,
                 followers: `${(currentId * 1.7).toFixed(1)}K`,
                 activeAds: (currentId % 18) + 2,
                 pageAge: `${(currentId % 5) + 1} Yrs`,
                 createdDate: `20${21 + (currentId % 4)}-0${(currentId % 8) + 1}-12`,
-                instaHandle: `@${brand.toLowerCase().replace(/\s+/g, '')}_official`,
+                instaHandle: `@${brand.toLowerCase().replace(/[^a-z0-9]/g, '')}_official`,
                 pageId: `10928374${currentId}`
             };
 
@@ -728,7 +724,7 @@
                     </div>
 
                     <div class="side-actions">
-                        <a href="${ad.storeUrl}" target="_blank" class="action-btn" onclick="event.stopPropagation();" title="Visit Store">🛍️</a>
+                        <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" class="action-btn" onclick="event.stopPropagation();" title="Visit Store">🛍️</a>
                         <div class="action-btn" onclick="event.stopPropagation(); showPageInfo('${ad.id}')" title="Page Details">ℹ️</div>
                         <div class="action-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${ad.storeUrl}'); alert('Store Link Copied!')" title="Copy Link">🔗</div>
                     </div>
@@ -756,8 +752,8 @@
                         </div>
 
                         <div class="cta-row">
-                            <a href="${ad.storeUrl}" target="_blank" onclick="event.stopPropagation();" class="cta-btn-store">Visit Store 🛍️ ↗</a>
-                            <a href="${ad.adLibraryUrl}" target="_blank" onclick="event.stopPropagation();" class="cta-btn-library">Ad Library ➔</a>
+                            <a href="${ad.storeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-store">Visit Store 🛍️ ↗</a>
+                            <a href="${ad.adLibraryUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="cta-btn-library">Ad Library ➔</a>
                         </div>
                     </div>
                 </div>
@@ -860,5 +856,5 @@
         applyFilters();
     </script>
 </body>
-    </html>
-    
+                        </html>
+                        
