@@ -576,8 +576,8 @@
     <script>
         // API Proxy endpoint connection
         const API_CONFIG = {
-            USE_LIVE_API: false, // We will turn this to true once backend API is deployed
-            BACKEND_URL: 'http://localhost:3000/api/search-ads'
+            USE_LIVE_API: true,
+            BACKEND_URL: 'https://minea-reels-spy.onrender.com/api/search-ads'
         };
 
         const brandNames = ["Uniqly.IN", "Aura Care", "Urban Style", "FitFlex Pro", "PureBlend", "Nordic Gear"];
@@ -628,7 +628,7 @@
                 }
             }
 
-            // Client-side execution loop fix & smooth test data
+            // Fallback mock data generation loop
             const mockBatch = [];
             for (let i = 0; i < 4; i++) {
                 adCounter++;
@@ -841,5 +841,5 @@
         renderFeed(false);
     </script>
 </body>
-    </html>
-    
+                        </html>
+                
