@@ -96,4 +96,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running and listening on port ${PORT}`);
 });
-package.json (no changes needed — same as before, still needs axios, express, cors, dotenv).
