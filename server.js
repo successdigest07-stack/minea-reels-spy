@@ -37,7 +37,7 @@ app.get('/api/search-ads', async (req, res) => {
         });
 
         const formattedAds = (response.data.data || []).map(ad => {
-            const start(DateStr = ad.ad_creation_time ? ad.ad_creation_time.split('T')[0] : 'Unknown');
+            const startDateStr = ad.ad_creation_time ? ad.ad_creation_time.split('T')[0] : 'Unknown';
             const isActive = !ad.ad_delivery_stop_time;
 
             return {
@@ -46,10 +46,10 @@ app.get('/api/search-ads', async (req, res) => {
                 brandName: ad.page_name || 'Verified Advertiser',
                 category: 'E-Commerce Brand',
                 dp: `https://graph.facebook.com/${ad.page_id}/picture?type=square`,
-                mediaUrl: 'https://picsum.photos/seed/${ad.id}/600/1000',
-                startDate: start(DateStr),
+                mediaUrl: `https://picsum.photos/seed/${ad.id}/600/1000`,
+                startDate: startDateStr,
                 endDate: isActive ? 'Running Now' : ad.ad_delivery_stop_time.split('T')[0],
-                daysRunning: calculateDaysRunning(start(DateStr)),
+                daysRunning: calculateDaysRunning(startDateStr),
                 status: isActive ? 'ACTIVE' : 'INACTIVE',
                 country: country || 'ALL',
                 language: 'en',
@@ -60,7 +60,7 @@ app.get('/api/search-ads', async (req, res) => {
                 followers: 'N/A',
                 activeAds: 'Active',
                 pageAge: 'Verified',
-                createdDate: start(DateStr),
+                createdDate: startDateStr,
                 instaHandle: `@${ad.page_name ? ad.page_name.toLowerCase().replace(/[^a-z0-9]/g, '') : ''}`,
                 pageId: ad.page_id
             };
