@@ -6,14 +6,15 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
+const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN;
+const ACTOR_ID = 'curious_coder~facebook-ads-library-scraper';
 
 app.get('/api/search-ads', async (req, res) => {
     try {
         const {
             query = '',
-            country = 'IN',
-            status = 'ACTIVE',
+            country = 'US',
+            status = 'active',
             limit = 10
         } = req.query;
 
@@ -21,57 +22,63 @@ app.get('/api/search-ads', async (req, res) => {
             return res.status(400).json({ error: 'Search query keyword is required.' });
         }
 
-        if (!META_ACCESS_TOKEN) {
-            return res.status(500).json({ error: 'Meta access token is missing on server.' });
+        if (!APIFY_API_TOKEN) {
+            return res.status(500).json({ error: 'Apify API token is missing on server.' });
         }
 
-        const response = await axios.get('https://graph.facebook.com/v19.0/ads_archive', {
-            params: {
-                access_token: META_ACCESS_TOKEN,
-                search_terms: query,
-                ad_reached_countries: `["${country}"]`,
-                ad_active_status: status,
-                fields: 'id,ad_creation_time,ad_delivery_stop_time,ad_creative_bodies,ad_creative_link_captions,ad_creative_link_descriptions,ad_snapshot_url,page_id,page_name',
-                limit: parseInt(limit)
-            }
-        });
+        const searchUrl = `https://www.facebook.com/ads/library/?active_status=${status}&ad_type=all&country=${country}&q=${encodeURIComponent(query)}&search_type=keyword_unordered`;
 
-        const formattedAds = (response.data.data || []).map(ad => {
-            const startDateStr = ad.ad_creation_time ? ad.ad_creation_time.split('T')[0] : 'Unknown';
-            const isActive = !ad.ad_delivery_stop_time;
+        const runResponse = await axios.post(
+            `https://api.apify.com/v2/acts/${ACTOR_ID}/run-sync-get-dataset-items`,
+            {
+                urls: [{ url: searchUrl }],
+                scrapeAdDetails: true,
+                totalRecords: parseInt(limit)
+            },
+            {
+                params: { token: APIFY_API_TOKEN },
+                timeout: 120000
+            }
+        );
+
+        const rawAds = runResponse.data || [];
+
+        const formattedAds = rawAds.map(ad => {
+            const startDateStr = ad.startDate || ad.ad_delivery_start_time || 'Unknown';
+            const isActive = ad.isActive !== undefined ? ad.isActive : true;
 
             return {
-                id: ad.id,
+                id: ad.adArchiveID || ad.ad_archive_id || 'N/A',
                 type: 'Image',
-                brandName: ad.page_name || 'Verified Advertiser',
+                brandName: ad.pageName || ad.page_name || 'Verified Advertiser',
                 category: 'E-Commerce Brand',
-                dp: `https://graph.facebook.com/${ad.page_id}/picture?type=square`,
-                mediaUrl: `https://picsum.photos/seed/${ad.id}/600/1000`,
+                dp: ad.pageProfilePictureUrl || '',
+                mediaUrl: ad.imageUrl || ad.videoUrl || `https://picsum.photos/seed/${ad.adArchiveID || Math.random()}/600/1000`,
                 startDate: startDateStr,
-                endDate: isActive ? 'Running Now' : ad.ad_delivery_stop_time.split('T')[0],
+                endDate: isActive ? 'Running Now' : (ad.endDate || 'Unknown'),
                 daysRunning: calculateDaysRunning(startDateStr),
                 status: isActive ? 'ACTIVE' : 'INACTIVE',
                 country: country || 'ALL',
                 language: 'en',
-                platform: ad.publisher_platforms || ['Instagram', 'Facebook'],
-                adCopy: ad.ad_creative_bodies ? ad.ad_creative_bodies[0] : 'No caption available for this creative.',
-                storeUrl: 'https://www.facebook.com/ads/library/?id=' + ad.id,
-                adLibraryUrl: 'https://www.facebook.com/ads/library/?id=' + ad.id,
+                platform: ad.publisherPlatform || ['Instagram', 'Facebook'],
+                adCopy: ad.adText || ad.body || 'No caption available for this creative.',
+                storeUrl: ad.adLibraryUrl || ad.ad_library_url || '',
+                adLibraryUrl: ad.adLibraryUrl || ad.ad_library_url || '',
                 followers: 'N/A',
                 activeAds: 'Active',
                 pageAge: 'Verified',
                 createdDate: startDateStr,
-                instaHandle: `@${ad.page_name ? ad.page_name.toLowerCase().replace(/[^a-z0-9]/g, '') : ''}`,
-                pageId: ad.page_id
+                instaHandle: `@${ad.pageName ? ad.pageName.toLowerCase().replace(/[^a-z0-9]/g, '') : ''}`,
+                pageId: ad.pageId || ad.page_id || ''
             };
         });
 
         res.json({ success: true, count: formattedAds.length, ads: formattedAds });
 
     } catch (error) {
-        console.error('Meta API Error:', error.response ? error.response.data : error.message);
+        console.error('Apify API Error:', error.response ? error.response.data : error.message);
         res.status(500).json({
-            error: 'Failed to fetch ads from Meta API',
+            error: 'Failed to fetch ads from Apify',
             details: error.response ? error.response.data : error.message
         });
     }
@@ -85,8 +92,8 @@ function calculateDaysRunning(startStr) {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// Bind to Render's dynamic port so the server stays alive
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running and listening on port ${PORT}`);
 });
+package.json (no changes needed — same as before, still needs axios, express, cors, dotenv).
